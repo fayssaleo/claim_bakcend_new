@@ -10,7 +10,7 @@ Route::group([
     'prefix' => 'api/automobiles'
 ], function ($router) {
     Route::post('/createOrUpdateAutomobile', [AutomobileController::class, 'createOrUpdateAutomobile']);
-    Route::post('/index/{claim_id}', [AutomobileController::class, 'index']);
+    Route::get('/{claim_id}', [AutomobileController::class, 'index']);
     Route::post('/delete', [AutomobileController::class, 'delete']);
 
 });

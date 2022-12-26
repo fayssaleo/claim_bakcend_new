@@ -91,12 +91,7 @@ class ContainerController extends Controller
             }
 
             if($request->file()) {
-                if($request->incident_reportFile!=null){
-                    $file=$request->incident_reportFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.containers.path'),$filename,"public_uploads_containers_incident_report");
-                    $container->incident_report=$filename;
-                }
+
                 if($request->liability_letterFile!=null){
                     $file=$request->liability_letterFile;
                     $filename=time()."_".$file->getClientOriginalName();
@@ -173,7 +168,6 @@ class ContainerController extends Controller
             $container->outsourcer_company_name=$request->outsourcer_company_name;
             $container->thirdparty_company_name=$request->thirdparty_company_name;
             $container->thirdparty_Activity_comments=$request->thirdparty_Activity_comments;
-            $container->incident_report=$request->incident_report;
             $container->liability_letter=$request->liability_letter;
             $container->insurance_declaration=$request->insurance_declaration;
             if($request->nature_of_damage["id"]==0){
@@ -224,12 +218,7 @@ class ContainerController extends Controller
                 }
             }
             if($request->file()) {
-                if($request->incident_reportFile!=null && $request->incident_reportFile!=""){
-                    $file=$request->incident_reportFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.containers.path'),$filename,"public_uploads_containers_incident_report");
-                    $container->incident_report=$filename;
-                }
+               
                 if($request->liability_letterFile!=null && $request->liability_letterFile!=""){
                     $file=$request->liability_letterFile;
                     $filename=time()."_".$file->getClientOriginalName();

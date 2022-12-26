@@ -15,12 +15,14 @@ return new class extends Migration
             $table->date("incident_date")->nullable();
             $table->string("ClaimOrIncident")->nullable();
             $table->string("status")->nullable();
+            $table->string("incident_report")->nullable();
             $table->timestamps();
         });
     }
 
 
-    public function down(){
+    public function down()
+    {
 
         Schema::dropIfExists('claims');
     }

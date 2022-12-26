@@ -150,7 +150,6 @@ class VesselController extends Controller
             $vessel->vessel_number=$request->vessel_number;
             $vessel->name=$request->name;
             $vessel->deductible_charge_TAT=$request->deductible_charge_TAT;
-            $vessel->status=$request->status;
             $vessel->concerned_internal_department=$request->concerned_internal_department;
             $vessel->vessel_number=$request->vessel_number;
             $vessel->cause_damage=$request->cause_damage;

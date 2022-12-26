@@ -42,13 +42,12 @@ class Automobile extends Model
         return $this->hasMany(Estimate::class);
     }
     protected $casts = [
-        'created_at' => 'datetime:d/m/Y H:i',
-        'updated_at' => 'datetime:d/m/Y H:i',
-        'incident_date' => 'datetime:d/m/Y H:i',
-        'claim_date' => 'datetime:d/m/Y H:i',
-        'date_of_reimbursement' => 'datetime:d/m/Y H:i',
-        'date_of_declaration' => 'datetime:d/m/Y H:i',
-        'date_of_feedback' => 'datetime:d/m/Y H:i',
+        'created_at' => 'datetime:m/d/Y H:i',
+        'updated_at' => 'datetime:m/d/Y H:i',
+        'date_of_reimbursement' => 'datetime:m/d/Y',
+        'date_of_declaration' => 'datetime:m/d/Y',
+        'date_of_feedback' => 'datetime:m/d/Y',
+        'Indemnification_date' => 'datetime:m/d/Y',
     ];
 
 }

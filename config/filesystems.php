@@ -62,12 +62,14 @@ return [
             'visibility' => 'public',
 
         ],
-        'public_uploads_equipments_incident_report' => [
+
+        'public_uploads_claim_incident_report' => [
             'driver' => 'local',
-            'root'   => storage_path('app/public/cdn/equipments/incident_report'),
+            'root'   => storage_path('app/public/cdn/claim/incident_report'),
             'visibility' => 'public',
 
         ],
+
         'public_uploads_equipments_liability_letter' => [
             'driver' => 'local',
             'root'   => storage_path('app/public/cdn/equipments/liability_letter'),
@@ -80,12 +82,7 @@ return [
             'visibility' => 'public',
 
         ],
-        'public_uploads_vessels_incident_report' => [
-            'driver' => 'local',
-            'root'   => storage_path('app/public/cdn/vessels/incident_report'),
-            'visibility' => 'public',
 
-        ],
         'public_uploads_vessels_liability_letter' => [
             'driver' => 'local',
             'root'   => storage_path('app/public/cdn/vessels/liability_letter'),
@@ -95,6 +92,20 @@ return [
         'public_uploads_vessels_insurance_declaration' => [
             'driver' => 'local',
             'root'   => storage_path('app/public/cdn/vessels/insurance_declaration'),
+            'visibility' => 'public',
+
+        ],
+
+
+        'public_uploads_containers_liability_letter' => [
+            'driver' => 'local',
+            'root'   => storage_path('app/public/cdn/containers/liability_letter'),
+            'visibility' => 'public',
+
+        ],
+        'public_uploads_containers_insurance_declaration' => [
+            'driver' => 'local',
+            'root'   => storage_path('app/public/cdn/containers/insurance_declaration'),
             'visibility' => 'public',
 
         ],

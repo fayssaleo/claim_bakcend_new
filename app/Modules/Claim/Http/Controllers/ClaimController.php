@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Modules\Claim\Models\Claim;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Libs\UploadTrait;
 
 class ClaimController extends Controller
 {
+    use UploadTrait;
+
     public function indexClaims(){
 
         $claim=Claim::select()->where('ClaimOrIncident', "Claim")->get();
@@ -64,6 +67,8 @@ class ClaimController extends Controller
         }
         else {
             $claim->status = "Treated";
+            $claim->save();
+
             return [
                 "payload" => $claim,
                 "status" => "200_1"
@@ -91,6 +96,8 @@ class ClaimController extends Controller
         }
         else {
             $claim->status = "Closed";
+            $claim->save();
+
             return [
                 "payload" => $claim,
                 "status" => "200_1"
@@ -100,21 +107,81 @@ class ClaimController extends Controller
     }
 
     public function create(Request $request){
-        $validator = Validator::make($request->all(), [
-            //"name" => "required:claims,name",
-        ]);
-        if ($validator->fails()) {
+
+        if ($request->id == 0) {
+
+            $validator = Validator::make($request->all(), [
+                //"name" => "required:claims,name",
+            ]);
+            if ($validator->fails()) {
+                return [
+                    "payload" => $validator->errors(),
+                    "status" => "406_2"
+                ];
+            }
+            $claim=Claim::make($request->all());
+            //$claim->status = "On progress";
+
+            if($request->file()) {
+                if($request->incident_reportFile!=null){
+                    $file=$request->incident_reportFile;
+                    $filename=time()."_".$file->getClientOriginalName();
+                    $this->uploadOne($file, config('cdn.claim.path'),$filename,"public_uploads_claim_incident_report");
+                    $claim->incident_report=$filename;
+                }
+
+            }
+            $claim->save();
             return [
-                "payload" => $validator->errors(),
-                "status" => "406_2"
+                "payload" => $claim,
+                "status" => "200"
             ];
+        } else {
+
+            $validator = Validator::make($request->all(), [
+                "id" => "required",
+            ]);
+            if ($validator->fails()) {
+                return [
+                    "payload" => $validator->errors(),
+                    "status" => "406_2"
+                ];
+            }
+            $claim=Claim::find($request->id);
+            if (!$claim) {
+                return [
+                    "payload" => "The searched row does not exist !",
+                    "status" => "404_3"
+                ];
+            }
+            if($request->name!=$claim->name){
+                if(Claim::where("name",$request->name)->count()>0)
+                    return [
+                        "payload" => "The claim has been already taken ! ",
+                        "status" => "406_2"
+                    ];
+            }
+            $claim->claim_date=$request->claim_date;
+            $claim->incident_date=$request->incident_date;
+            $claim->ClaimOrIncident=$request->ClaimOrIncident;
+            if($request->file()) {
+                if($request->incident_reportFile!=null){
+                    $file=$request->incident_reportFile;
+                    $filename=time()."_".$file->getClientOriginalName();
+                    $this->uploadOne($file, config('cdn.claim.path'),$filename,"public_uploads_claim_incident_report");
+                    $claim->incident_report=$filename;
+                }
+
+            }
+            $claim->save();
+            return [
+                "payload" => $claim,
+                "status" => "200"
+            ];
+
         }
-        $claim=Claim::make($request->all());
-        $claim->save();
-        return [
-            "payload" => $claim,
-            "status" => "200"
-        ];
+
+
     }
 
     public function update(Request $request){

@@ -32,6 +32,7 @@ class EquipmentController extends Controller
             $claim = null;
             if($request->claim_id==0){
                 $claim = new Claim();
+                //$claim->claimOrIncident = $request->claimOrIncident;
                 $claim->save();
             }
             else{
@@ -42,6 +43,8 @@ class EquipmentController extends Controller
                         "status" => "404_3"
                     ];
                 }
+               // $claim->claimOrIncident = $request->claimOrIncident;
+                $claim->save();
             }
             $equipment=Equipment::make($request->all());
             $equipment->claim_id = $claim->id;
@@ -146,7 +149,15 @@ class EquipmentController extends Controller
         }
         else {
 
-
+                $claim=Claim::find($request->claim_id);
+                if (!$claim) {
+                    return [
+                        "payload" => "The searched claim does not exist !",
+                        "status" => "404_3"
+                    ];
+                }
+               // $claim->claimOrIncident = $request->claimOrIncident;
+                $claim->save();
 
                 $validator = Validator::make($request->all(), [
                 ]);
@@ -196,6 +207,7 @@ class EquipmentController extends Controller
                 $equipment->incident_report=$request->incident_report;
                 $equipment->liability_letter=$request->liability_letter;
                 $equipment->insurance_declaration=$request->insurance_declaration;
+                
                 if($request->nature_of_damage["id"]==0){
                 if($request->nature_of_damage["name"]!=null || $request->nature_of_damage["name"]!=""){
                     $nature_of_damage_returnedValue=$this->nature_of_damage_confirmAndSave($request->nature_of_damage);
