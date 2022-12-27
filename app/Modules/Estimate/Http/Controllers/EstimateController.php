@@ -113,6 +113,23 @@ class EstimateController extends Controller
             "status" => "200_00"
         ];
     }
+    public function getCustomedFieldByEstimate($id)
+    {
+        $customedField = CustomedField::select()
+            ->where('estimate_id', "=", $id)
+            ->get();
+        if (!$customedField) {
+            return [
+                "payload" => "The searched row does not exist !",
+                "status" => "404_1"
+            ];
+        } else {
+            return [
+                "payload" => $customedField,
+                "status" => "200_1"
+            ];
+        }
+    }
     public function get($id)
     {
         $estimate = Estimate::find($id);
@@ -149,6 +166,7 @@ class EstimateController extends Controller
         }
         $estimate->save();
         $estimate->customedFields = [];
+        $datacustomedFields = [];
         $amount = 0;
         if (!empty($request->customedFields)) {
             for ($i = 0; $i < count($request->customedFields); $i++) {
@@ -158,11 +176,13 @@ class EstimateController extends Controller
                 $customedField->estimate_id = $estimate->id;
 
                 $customedField->save();
+
+                array_push($datacustomedFields,$customedField);
+
                 $amount = $request->customedFields[$i]["value"];
             }
         }
-
-
+        $estimate->customedFields = $datacustomedFields;
         $EstimateModel = new stdClass();
 
 

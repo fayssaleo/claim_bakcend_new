@@ -16,6 +16,7 @@ Route::group([
     Route::get('/indexAutomobile/{id}', [EstimateController::class, 'indexAutomobile']);
     Route::get('/indexVessel/{id}', [EstimateController::class, 'indexVessel']);
     Route::get('/{id}', [EstimateController::class, 'get']);
+    Route::get('/CustomedField/{id}', [EstimateController::class, 'getCustomedFieldByEstimate']);
     Route::post('/create', [EstimateController::class, 'create']);
     Route::post('/update', [EstimateController::class, 'update']);
     Route::post('/update/container', [EstimateController::class, 'updateContainer']);
