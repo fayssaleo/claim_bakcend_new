@@ -261,8 +261,8 @@ class EstimateController extends Controller
 
         $customedFieldsByEstimateID=CustomedField::select()->where('estimate_id', $estimate->id)
         ->get();
-        if (!empty($request->customedFields)) {
-
+        //dd($request);
+       /*  if (!empty($request->customedFields)) {
             if (!empty($request->deleteInputs)) {
                 for ($i=0; $i <count($request->deleteInputs) ; $i++) {
                     for ($j=0; $j < count($customedFieldsByEstimateID) ; $j++) {
@@ -274,6 +274,12 @@ class EstimateController extends Controller
                 }
             }
 
+        } */
+        if (!empty($request->deleteInputs)) {
+            for ($i=0; $i <count($request->deleteInputs) ; $i++) {
+                    $customedFieldToDelete = CustomedField::find($request->deleteInputs[$i]["id"]);
+                    $customedFieldToDelete->delete();
+            }
         }
 
         // add new CustomedField >8999
