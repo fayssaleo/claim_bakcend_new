@@ -177,6 +177,7 @@ class EquipmentController extends Controller
                 }
 
                 $equipment->name=$request->name;
+                $equipment->department_id=$request->department_id;
                 $equipment->deductible_charge_TAT=$request->deductible_charge_TAT;
                 $equipment->categorie_of_equipment=$request->categorie_of_equipment;
                 $equipment->concerned_internal_department=$request->concerned_internal_department;
