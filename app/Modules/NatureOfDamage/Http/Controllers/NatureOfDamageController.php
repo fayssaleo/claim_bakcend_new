@@ -21,6 +21,42 @@ class NatureOfDamageController extends Controller
         ];
     }
 
+    public function indexEquipment(){
+
+        $natureOfDamage=NatureOfDamage::select()->where('categorie', "equipment")->get();
+
+        return [
+            "payload" => $natureOfDamage,
+            "status" => "200_00"
+        ];
+    }
+    public function indexAutomobile(){
+
+        $natureOfDamage=NatureOfDamage::select()->where('categorie', "automobile")->get();
+
+        return [
+            "payload" => $natureOfDamage,
+            "status" => "200_00"
+        ];
+    }
+    public function indexContainer(){
+
+        $natureOfDamage=NatureOfDamage::select()->where('categorie', "container")->get();
+
+        return [
+            "payload" => $natureOfDamage,
+            "status" => "200_00"
+        ];
+    }
+    public function indexVessel(){
+
+        $natureOfDamage=NatureOfDamage::select()->where('categorie', "vessel")->get();
+
+        return [
+            "payload" => $natureOfDamage,
+            "status" => "200_00"
+        ];
+    }
     public function get($id){
         $natureOfDamage=NatureOfDamage::find($id);
         if(!$natureOfDamage){

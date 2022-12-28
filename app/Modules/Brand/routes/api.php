@@ -15,6 +15,7 @@ Route::group([
     Route::get('/index/equipment', [BrandController::class, 'indexEquipment']);
     Route::get('/index/automobile', [BrandController::class, 'indexAutomobile']);
 
+
     Route::post('/create', [BrandController::class, 'create']);
     Route::post('/update', [BrandController::class, 'update']);
     Route::post('/delete', [BrandController::class, 'delete']);

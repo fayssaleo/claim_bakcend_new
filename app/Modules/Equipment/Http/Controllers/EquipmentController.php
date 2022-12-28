@@ -354,6 +354,8 @@ class EquipmentController extends Controller
             ];
         }
         $natureOfDamage=NatureOfDamage::make($NatureOfDamage);
+        $natureOfDamage->categorie="automobile";
+
         $natureOfDamage->save();
         return [
             "payload" => $natureOfDamage,
