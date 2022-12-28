@@ -35,6 +35,24 @@ class BrandController extends Controller
             ];
         }
     }
+    public function indexEquipment(){
+
+        $brand=Brand::select()->where('categorie', "equipment")->get();
+
+        return [
+            "payload" => $brand,
+            "status" => "200_00"
+        ];
+    }
+    public function indexAutomobile(){
+
+        $brand=Brand::select()->where('categorie', "automobile")->get();
+
+        return [
+            "payload" => $brand,
+            "status" => "200_00"
+        ];
+    }
 
     public function create(Request $request){
         $validator = Validator::make($request->all(), [

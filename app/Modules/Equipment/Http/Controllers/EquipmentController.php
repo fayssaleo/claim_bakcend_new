@@ -394,6 +394,8 @@ class EquipmentController extends Controller
         }
 
         $brand=Brand::make($Brand);
+        $brand->categorie="equipment";
+
         $brand->save();
 
         return [
