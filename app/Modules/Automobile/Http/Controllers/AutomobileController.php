@@ -393,6 +393,8 @@ class AutomobileController extends Controller
         }
 
         $brand=Brand::make($Brand);
+        $brand->categorie="automobile";
+
         $brand->save();
 
         return [
@@ -434,6 +436,8 @@ class AutomobileController extends Controller
         }
 
         $type_of_equipemnt=TypeOfEquipment::make($Type_of_equipment);
+        $type_of_equipemnt->categorie="automobile";
+
         $type_of_equipemnt->save();
 
         return [
