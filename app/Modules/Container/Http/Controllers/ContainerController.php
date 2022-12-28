@@ -218,7 +218,7 @@ class ContainerController extends Controller
                 }
             }
             if($request->file()) {
-               
+
                 if($request->liability_letterFile!=null && $request->liability_letterFile!=""){
                     $file=$request->liability_letterFile;
                     $filename=time()."_".$file->getClientOriginalName();
@@ -294,6 +294,8 @@ class ContainerController extends Controller
             ];
         }
         $natureOfDamage=NatureOfDamage::make($NatureOfDamage);
+        $natureOfDamage->categorie="container";
+
         $natureOfDamage->save();
         return [
             "payload" => $natureOfDamage,
@@ -335,6 +337,7 @@ class ContainerController extends Controller
         }
 
         $shipping_line=ShippingLine::make($shipping_line);
+
         $shipping_line->save();
 
         return [

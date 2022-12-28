@@ -307,6 +307,8 @@ class VesselController extends Controller
             ];
         }
         $natureOfDamage=NatureOfDamage::make($NatureOfDamage);
+        $natureOfDamage->categorie="vessel";
+
         $natureOfDamage->save();
         return [
             "payload" => $natureOfDamage,
@@ -387,6 +389,7 @@ class VesselController extends Controller
         }
 
         $brand=Brand::make($Brand);
+
         $brand->save();
 
         return [
