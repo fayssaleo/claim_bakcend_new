@@ -20,6 +20,25 @@ class TypeOfEquipmentController extends Controller{
             "status" => "200_00"
         ];
     }
+    public function indexEquipment(){
+
+        $typeOfEquipment=TypeOfEquipment::select()->where('categorie', "equipment")->get();
+
+        return [
+            "payload" => $typeOfEquipment,
+            "status" => "200_00"
+        ];
+    }
+    public function indexAutomobile(){
+
+        $typeOfEquipment=TypeOfEquipment::select()->where('categorie', "automobile")->get();
+
+        return [
+            "payload" => $typeOfEquipment,
+            "status" => "200_00"
+        ];
+    }
+   
 
     public function get($id){
         $typeOfEquipment=TypeOfEquipment::find($id);

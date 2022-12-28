@@ -12,6 +12,9 @@ Route::group([
 ], function ($router) {
     Route::get('/', [TypeOfEquipmentController::class, 'index']);
     Route::get('/{id}', [TypeOfEquipmentController::class, 'get']);
+    Route::get('/index/equipment', [TypeOfEquipmentController::class, 'indexEquipment']);
+    Route::get('/index/automobile', [TypeOfEquipmentController::class, 'indexAutomobile']);
+
     Route::post('/create', [TypeOfEquipmentController::class, 'create']);
     Route::post('/update', [TypeOfEquipmentController::class, 'update']);
     Route::post('/delete', [TypeOfEquipmentController::class, 'delete']);
