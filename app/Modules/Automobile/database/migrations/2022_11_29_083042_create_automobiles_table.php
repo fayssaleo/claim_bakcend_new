@@ -33,7 +33,7 @@ return new class extends Migration
             $table->foreign('nature_of_damage_id')->references('id')->on('nature_of_damages')->onDelete('cascade');
 
             $table->bigInteger('department_id')->unsigned()->nullable();
-            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
+            $table->foreign('department_id')->references('id')->on('departments');
 
             $table->string("concerned_internal_department")->nullable();
             $table->string("equipement_registration")->nullable();

@@ -70,6 +70,18 @@ return [
 
         ],
 
+        'public_uploads_automobiles_liability_letter' => [
+            'driver' => 'local',
+            'root'   => storage_path('app/public/cdn/automobiles/liability_letter'),
+            'visibility' => 'public',
+
+        ],
+        'public_uploads_automobiles_insurance_declaration' => [
+            'driver' => 'local',
+            'root'   => storage_path('app/public/cdn/automobiles/insurance_declaration'),
+            'visibility' => 'public',
+
+        ],
         'public_uploads_equipments_liability_letter' => [
             'driver' => 'local',
             'root'   => storage_path('app/public/cdn/equipments/liability_letter'),

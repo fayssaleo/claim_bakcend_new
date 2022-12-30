@@ -369,7 +369,7 @@ class EquipmentController extends Controller
         $natureOfDamage=NatureOfDamage::find($NatureOfDamage['id']);
             if(!$natureOfDamage){
                 return [
-                    "payload"=>"nature Of Damage is not exist !",
+                    "payload"=>"nature of Damage is not exist !",
                     "status"=>"404_2",
                     "IsReturnErrorRespone" => true
                 ];

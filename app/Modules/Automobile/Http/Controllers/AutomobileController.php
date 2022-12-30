@@ -166,6 +166,7 @@ class AutomobileController extends Controller
                 ];
             }
             $automobile->name=$request->name;
+            $automobile->department_id=$request->department_id;
             $automobile->deductible_charge_TAT=$request->deductible_charge_TAT;
             $automobile->categorie_of_equipment=$request->categorie_of_equipment;
             $automobile->concerned_internal_department=$request->concerned_internal_department;
@@ -273,13 +274,13 @@ class AutomobileController extends Controller
                 if($request->incident_reportFile!=null && $request->incident_reportFile!=""){
                     $file=$request->incident_reportFile;
                     $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_equipments_incident_report");
+                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_automobiles_incident_report");
                     $automobile->incident_report=$filename;
                 }
                 if($request->liability_letterFile!=null && $request->liability_letterFile!=""){
                     $file=$request->liability_letterFile;
                     $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_equipments_liability_letter");
+                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_automobiles_liability_letter");
                     $automobile->liability_letter=$filename;
 
 
@@ -288,7 +289,7 @@ class AutomobileController extends Controller
                 if($request->insurance_declarationFile!=null && $request->insurance_declarationFile!=""){
                     $file=$request->insurance_declarationFile;
                     $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_equipments_insurance_declaration");
+                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_automobiles_insurance_declaration");
                     $automobile->insurance_declaration=$filename;
 
                 }
@@ -341,7 +342,7 @@ class AutomobileController extends Controller
 
     public function nature_of_damage_confirmAndSave($NatureOfDamage){
         $validator = Validator::make($NatureOfDamage, [
-            "name" => "required:nature_of_damages,name",
+           // "name" => "required:nature_of_damages,name",
         ]);
         if ($validator->fails()) {
             return [
@@ -366,7 +367,7 @@ class AutomobileController extends Controller
         $natureOfDamage=NatureOfDamage::find($NatureOfDamage['id']);
             if(!$natureOfDamage){
                 return [
-                    "payload"=>"natureOfDamage is not exist !",
+                    "payload"=>"nature of Damage is not exist !",
                     "status"=>"404_2",
                     "IsReturnErrorRespone" => true
                 ];
@@ -384,7 +385,7 @@ class AutomobileController extends Controller
 
     public function brand_confirmAndSave($Brand){
         $validator = Validator::make($Brand, [
-            "name" => "required:brands,name",
+            //"name" => "required:brands,name",
         ]);
 
         if ($validator->fails()) {
@@ -427,7 +428,7 @@ class AutomobileController extends Controller
 
     public function type_of_equipment_confirmAndSave($Type_of_equipment){
         $validator = Validator::make($Type_of_equipment, [
-            "name" => "required:type_of_equipments,name",
+            //"name" => "required:type_of_equipments,name",
         ]);
 
         if ($validator->fails()) {
