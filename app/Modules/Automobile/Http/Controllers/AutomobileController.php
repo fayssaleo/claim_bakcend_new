@@ -128,13 +128,13 @@ class AutomobileController extends Controller
                 if($request->liability_letterFile!=null){
                     $file=$request->liability_letterFile;
                     $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_equipments_liability_letter");
+                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_automobiles_liability_letter");
                     $automobile->liability_letter=$filename;
                 }
                 if($request->insurance_declarationFile!=null){
                     $file=$request->insurance_declarationFile;
                     $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_equipments_insurance_declaration");
+                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_automobiles_insurance_declaration");
                     $automobile->insurance_declaration=$filename;
                 }
             }
