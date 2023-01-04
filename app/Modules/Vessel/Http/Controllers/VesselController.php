@@ -272,8 +272,33 @@ class VesselController extends Controller
         ->with("shippingLine")
         ->with("natureOfDamage")
         ->with("department")
+        ->with("estimate.customedField")
         //->with("estimate")
         ->get();
+
+        for ($j=0; $j < count($vessel)  ; $j++) {
+            $calculated = false;
+            $totalAmount = 0;
+            $currency = "";
+            $AmountCustomedField = 0;
+            for ($i = count($vessel[$j]->estimate)-1; $i >= 0; $i--) {
+                if($vessel[$j]->estimate[$i]->temporary_or_permanent=="Permanent" && !$calculated){
+                    for ($d = 0; $d < count($vessel[$j]->estimate[$i]->customedField); $d++) {
+                        $AmountCustomedField += $vessel[$j]->estimate[$i]->customedField[$d]->value;
+
+                    }
+                    $totalAmount += $AmountCustomedField +
+                     $vessel[$j]->estimate[$i]->equipment_purchase_costs +
+                      $vessel[$j]->estimate[$i]->installation_and_facilities_costs +
+                       $vessel[$j]->estimate[$i]->rransportation_costs;
+                    $calculated = true;
+                    $currency = $vessel[$j]->estimate[$i]->currency_estimate;
+                }
+
+            }
+            $vessel[$j]->estimationAmount = $totalAmount." (".$currency.")";
+        }
+
             return [
                 "payload" => $vessel,
                 "status" => "200_1"

@@ -13,6 +13,7 @@ use App\Modules\TypeOfEquipment\Models\TypeOfEquipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Expr\Array_;
+use stdClass;
 
 class EquipmentController extends Controller
 {
@@ -321,7 +322,34 @@ class EquipmentController extends Controller
         ->with("brand")
         ->with("natureOfDamage")
         ->with("department")
+        ->with("estimate")
+        ->with("estimate.customedField")
         ->get();
+
+        for ($j=0; $j < count($equipment)  ; $j++) {
+            $calculated = false;
+            $totalAmount = 0;
+            $currency = "";
+            $AmountCustomedField = 0;
+            for ($i = count($equipment[$j]->estimate)-1; $i >= 0; $i--) {
+                if($equipment[$j]->estimate[$i]->temporary_or_permanent=="Permanent" && !$calculated){
+                    for ($d = 0; $d < count($equipment[$j]->estimate[$i]->customedField); $d++) {
+                        $AmountCustomedField += $equipment[$j]->estimate[$i]->customedField[$d]->value;
+
+                    }
+                    $totalAmount += $AmountCustomedField +
+                     $equipment[$j]->estimate[$i]->equipment_purchase_costs +
+                      $equipment[$j]->estimate[$i]->installation_and_facilities_costs +
+                       $equipment[$j]->estimate[$i]->rransportation_costs;
+                    $calculated = true;
+                    $currency = $equipment[$j]->estimate[$i]->currency_estimate;
+                }
+
+            }
+
+            $equipment[$j]->estimationAmount = $totalAmount." (".$currency.")";
+        }
+
         return [
             "payload" => $equipment,
             "status" => "200_1"

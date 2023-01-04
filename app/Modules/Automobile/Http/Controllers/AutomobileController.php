@@ -314,7 +314,32 @@ class AutomobileController extends Controller
         ->with("brand")
         ->with("natureOfDamage")
         ->with("department")
+        ->with("estimate.customedField")
         ->get();
+
+        for ($j=0; $j < count($automobile)  ; $j++) {
+            $calculated = false;
+            $totalAmount = 0;
+            $currency = "";
+            $AmountCustomedField = 0;
+            for ($i = count($automobile[$j]->estimate)-1; $i >= 0; $i--) {
+                if($automobile[$j]->estimate[$i]->temporary_or_permanent=="Permanent" && !$calculated){
+                    for ($d = 0; $d < count($automobile[$j]->estimate[$i]->customedField); $d++) {
+                        $AmountCustomedField += $automobile[$j]->estimate[$i]->customedField[$d]->value;
+
+                    }
+                    $totalAmount += $AmountCustomedField +
+                     $automobile[$j]->estimate[$i]->equipment_purchase_costs +
+                      $automobile[$j]->estimate[$i]->installation_and_facilities_costs +
+                       $automobile[$j]->estimate[$i]->rransportation_costs;
+                    $calculated = true;
+                    $currency = $automobile[$j]->estimate[$i]->currency_estimate;
+                }
+
+            }
+            $automobile[$j]->estimationAmount = $totalAmount." (".$currency.")";
+        }
+
         return [
             "payload" => $automobile,
             "status" => "200_1"

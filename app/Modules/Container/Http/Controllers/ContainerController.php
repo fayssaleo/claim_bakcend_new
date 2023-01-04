@@ -256,7 +256,32 @@ class ContainerController extends Controller
         ->with("natureOfDamage")
         ->with("department")
         ->with("estimate")
+        ->with("estimate.customedField")
         ->get();
+
+        for ($j=0; $j < count($container)  ; $j++) {
+            $calculated = false;
+            $totalAmount = 0;
+            $currency = "";
+            $AmountCustomedField = 0;
+            for ($i = count($container[$j]->estimate)-1; $i >= 0; $i--) {
+                if($container[$j]->estimate[$i]->temporary_or_permanent=="Permanent" && !$calculated){
+                    for ($d = 0; $d < count($container[$j]->estimate[$i]->customedField); $d++) {
+                        $AmountCustomedField += $container[$j]->estimate[$i]->customedField[$d]->value;
+
+                    }
+                    $totalAmount += $AmountCustomedField +
+                     $container[$j]->estimate[$i]->equipment_purchase_costs +
+                      $container[$j]->estimate[$i]->installation_and_facilities_costs +
+                       $container[$j]->estimate[$i]->rransportation_costs;
+                    $calculated = true;
+                    $currency = $container[$j]->estimate[$i]->currency_estimate;
+                }
+
+            }
+            $container[$j]->estimationAmount = $totalAmount." (".$currency.")";
+        }
+
             return [
                 "payload" => $container,
                 "status" => "200_1"

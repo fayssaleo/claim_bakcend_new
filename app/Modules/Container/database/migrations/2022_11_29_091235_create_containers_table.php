@@ -40,7 +40,7 @@ return new class extends Migration
 
             // new attr
             $table->string("containerType")->nullable();
-            $table->bigInteger("containerID")->nullable();
+            $table->string("containerID")->nullable();
             $table->bigInteger("nombre_of_containers")->nullable();
             //
 

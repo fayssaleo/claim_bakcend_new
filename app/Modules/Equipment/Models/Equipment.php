@@ -45,10 +45,12 @@ class Equipment extends Model
     }
 
 
+
     public function estimate()
     {
         return $this->hasMany(Estimate::class);
     }
+
 
     protected $casts = [
         'created_at' => 'datetime:m/d/Y H:i',
