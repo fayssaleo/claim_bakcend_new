@@ -33,6 +33,8 @@ return new class extends Migration
 
             $table->bigInteger('department_id')->unsigned()->nullable();
             $table->foreign('department_id')->references('id')->on('departments');
+            $table->bigInteger('matricule_id')->unsigned()->nullable();
+            $table->foreign('matricule_id')->references('id')->on('equipment_matricules');
 
 
 
@@ -60,8 +62,10 @@ return new class extends Migration
             $table->string("comment_nature_of_damage")->nullable();
             $table->string("TAT_name_persons")->nullable();
             $table->string("outsourcer_company_name")->nullable();
+            $table->string("outsourcer_persons")->nullable();
             $table->string("thirdparty_company_name")->nullable();
             $table->string("thirdparty_Activity_comments")->nullable();
+            $table->string("thirdparty_persons")->nullable();
             $table->string("incident_report")->nullable();
             $table->string("liability_letter")->nullable();
             $table->string("insurance_declaration")->nullable();

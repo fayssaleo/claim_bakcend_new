@@ -121,7 +121,9 @@ class ClaimController extends Controller
             }
             $claim=Claim::make($request->all());
             //$claim->status = "On progress";
-
+            if($claim->status=="" || $claim->status==null){
+                $claim->status = "On progress";
+            }
             if($request->file()) {
                 if($request->incident_reportFile!=null){
                     $file=$request->incident_reportFile;

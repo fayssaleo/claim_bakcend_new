@@ -10,6 +10,7 @@ use App\Modules\Equipment\Models\Equipment;
 use App\Modules\File\Models\File;
 use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\TypeOfEquipment\Models\TypeOfEquipment;
+use App\Modules\EquipmentMatricule\Models\EquipmentMatricule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Expr\Array_;
@@ -95,6 +96,29 @@ class EquipmentController extends Controller
                     ];
                 }
             }
+            if($request->matricule["id"]==0){
+                if($request->matricule["matricule"]!=null || $request->matricule["matricule"]!=""){
+                    $equipmentMatricule_returnedValue=$this->equipmentMatricule_confirmAndSave($request->matricule);
+
+                if($equipmentMatricule_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $equipmentMatricule_returnedValue["payload"],
+                        "status" => $equipmentMatricule_returnedValue["status"]
+                    ];
+                }
+                $equipment->matricule_id=$equipmentMatricule_returnedValue["payload"]->id;
+                }
+            }
+            else{
+                $equipmentMatricule_returnedValue=$this->equipmentMatricule_confirmAndUpdate($request->matricule);
+                $equipment->matricule_id=$request->matricule["id"];
+                if($equipmentMatricule_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $equipmentMatricule_returnedValue["payload"],
+                        "status" => $equipmentMatricule_returnedValue["status"]
+                    ];
+                }
+            }
             if($request->type_of_equipment["id"]==0){
                 if($request->type_of_equipment["name"]!=null || $request->type_of_equipment["name"]!=""){
                     $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndSave($request->type_of_equipment);
@@ -142,7 +166,6 @@ class EquipmentController extends Controller
             $equipment->type_of_equipment= $equipment->typeOfEquipment;
             $equipment->brand= $equipment->brand;
             $equipment->nature_of_damage= $equipment->natureOfDamage;
-
             return [
                 "payload" => $equipment,
                 "status" => "200"
@@ -159,7 +182,6 @@ class EquipmentController extends Controller
                 }
                // $claim->claimOrIncident = $request->claimOrIncident;
                 $claim->save();
-
                 $validator = Validator::make($request->all(), [
                 ]);
                 if ($validator->fails()) {
@@ -176,7 +198,6 @@ class EquipmentController extends Controller
                     "status" => "404_3"
                 ];
                 }
-
                 $equipment->name=$request->name;
                 $equipment->department_id=$request->department_id;
                 $equipment->deductible_charge_TAT=$request->deductible_charge_TAT;
@@ -204,7 +225,9 @@ class EquipmentController extends Controller
                 $equipment->comment_nature_of_damage=$request->comment_nature_of_damage;
                 $equipment->TAT_name_persons=$request->TAT_name_persons;
                 $equipment->outsourcer_company_name=$request->outsourcer_company_name;
+                $equipment->outsourcer_persons=$request->outsourcer_persons;
                 $equipment->thirdparty_company_name=$request->thirdparty_company_name;
+                $equipment->thirdparty_persons=$request->thirdparty_persons;
                 $equipment->thirdparty_Activity_comments=$request->thirdparty_Activity_comments;
                 $equipment->incident_report=$request->incident_report;
                 $equipment->liability_letter=$request->liability_letter;
@@ -280,6 +303,31 @@ class EquipmentController extends Controller
                     ];
                 }
                 }
+
+                if($request->matricule["id"]==0){
+                    if($request->matricule["matricule"]!=null || $request->matricule["matricule"]!=""){
+                        $equipmentMatricule_returnedValue=$this->equipmentMatricule_confirmAndSave($request->matricule);
+
+                    if($equipmentMatricule_returnedValue["IsReturnErrorRespone"]){
+                        return [
+                            "payload" => $equipmentMatricule_returnedValue["payload"],
+                            "status" => $equipmentMatricule_returnedValue["status"]
+                        ];
+                    }
+                    $equipment->matricule_id=$equipmentMatricule_returnedValue["payload"]->id;
+                    }
+                }
+                else{
+                    $equipmentMatricule_returnedValue=$this->equipmentMatricule_confirmAndUpdate($request->matricule);
+                    $equipment->matricule_id=$request->matricule["id"];
+                    if($equipmentMatricule_returnedValue["IsReturnErrorRespone"]){
+                        return [
+                            "payload" => $equipmentMatricule_returnedValue["payload"],
+                            "status" => $equipmentMatricule_returnedValue["status"]
+                        ];
+                    }
+                }
+
                 if($request->file()) {
                 if($request->incident_reportFile!=null && $request->incident_reportFile!=""){
                     $file=$request->incident_reportFile;
@@ -322,6 +370,7 @@ class EquipmentController extends Controller
         ->with("brand")
         ->with("natureOfDamage")
         ->with("department")
+        ->with("matricule")
         ->with("estimate")
         ->with("estimate.customedField")
         ->get();
@@ -489,6 +538,46 @@ class EquipmentController extends Controller
                 $type_of_equipment->save();
                 return [
                     "payload"=>$type_of_equipment,
+                    "status"=>"200",
+                    "IsReturnErrorRespone" => false
+                ];
+            }
+    }
+    public function equipmentMatricule_confirmAndSave($EquipmentMatricule){
+        $validator = Validator::make($EquipmentMatricule, [
+            //"name" => "required:brands,name",
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                "payload" => $validator->errors(),
+                "status" => "406_2"
+            ];
+        }
+
+        $equipmentMatricule=EquipmentMatricule::make($EquipmentMatricule);
+
+        $equipmentMatricule->save();
+
+        return [
+            "payload" => $equipmentMatricule,
+            "status" => "200",
+            "IsReturnErrorRespone" => false
+        ];
+    }
+    public function equipmentMatricule_confirmAndUpdate($EquipmentMatricule){
+        $equipmentMatricule=EquipmentMatricule::find($EquipmentMatricule['id']);
+            if(!$equipmentMatricule){
+                return [
+                    "payload"=>"equipmentMatricule is not exist !",
+                    "status"=>"404_2",
+                    "IsReturnErrorRespone" => true
+                ];
+            }
+            else if ($equipmentMatricule){
+                $equipmentMatricule->save();
+                return [
+                    "payload"=>$equipmentMatricule,
                     "status"=>"200",
                     "IsReturnErrorRespone" => false
                 ];

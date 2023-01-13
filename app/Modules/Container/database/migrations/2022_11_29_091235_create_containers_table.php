@@ -65,12 +65,13 @@ return new class extends Migration
             $table->string("comment_nature_of_damage")->nullable();
             $table->string("TAT_name_persons")->nullable();
             $table->string("outsourcer_company_name")->nullable();
+            $table->string("outsourcer_persons")->nullable();
             $table->string("thirdparty_company_name")->nullable();
             $table->string("thirdparty_Activity_comments")->nullable();
+            $table->string("thirdparty_persons")->nullable();
             $table->string("incident_report")->nullable();
             $table->string("liability_letter")->nullable();
             $table->string("insurance_declaration")->nullable();
-
             $table->timestamps();
         });
     }

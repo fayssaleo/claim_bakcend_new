@@ -129,7 +129,15 @@ class VesselController extends Controller
             ];
         }
         else {
-
+            $claim=Claim::find($request->claim_id);
+                if (!$claim) {
+                    return [
+                        "payload" => "The searched claim does not exist !",
+                        "status" => "404_3"
+                    ];
+                }
+               // $claim->claimOrIncident = $request->claimOrIncident;
+                $claim->save();
             $validator = Validator::make($request->all(), [
             ]);
             if ($validator->fails()) {
@@ -173,8 +181,10 @@ class VesselController extends Controller
             $vessel->comment_nature_of_damage=$request->comment_nature_of_damage;
             $vessel->TAT_name_persons=$request->TAT_name_persons;
             $vessel->outsourcer_company_name=$request->outsourcer_company_name;
+            $vessel->outsourcer_persons=$request->outsourcer_persons;
             $vessel->thirdparty_company_name=$request->thirdparty_company_name;
             $vessel->thirdparty_Activity_comments=$request->thirdparty_Activity_comments;
+            $vessel->thirdparty_persons=$request->thirdparty_persons;
             $vessel->incident_report=$request->incident_report;
             $vessel->liability_letter=$request->liability_letter;
             $vessel->insurance_declaration=$request->insurance_declaration;

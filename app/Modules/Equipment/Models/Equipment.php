@@ -11,6 +11,7 @@ use App\Modules\Department\Models\Department;
 use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\Claim\Models\Claim;
 use App\Modules\Estimate\Models\Estimate;
+use App\Modules\EquipmentMatricule\Models\EquipmentMatricule;
 
 
 class Equipment extends Model
@@ -44,6 +45,10 @@ class Equipment extends Model
         return $this->belongsTo(Department::class);
     }
 
+    public function matricule()
+    {
+        return $this->belongsTo(EquipmentMatricule::class);
+    }
 
 
     public function estimate()

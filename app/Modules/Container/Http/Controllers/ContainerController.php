@@ -117,7 +117,15 @@ class ContainerController extends Controller
             ];
         }
         else {
-
+            $claim=Claim::find($request->claim_id);
+                if (!$claim) {
+                    return [
+                        "payload" => "The searched claim does not exist !",
+                        "status" => "404_3"
+                    ];
+                }
+               // $claim->claimOrIncident = $request->claimOrIncident;
+                $claim->save();
             $validator = Validator::make($request->all(), [
             ]);
             if ($validator->fails()) {
@@ -166,8 +174,10 @@ class ContainerController extends Controller
             $container->comment_nature_of_damage=$request->comment_nature_of_damage;
             $container->TAT_name_persons=$request->TAT_name_persons;
             $container->outsourcer_company_name=$request->outsourcer_company_name;
+            $container->outsourcer_persons=$request->outsourcer_persons;
             $container->thirdparty_company_name=$request->thirdparty_company_name;
             $container->thirdparty_Activity_comments=$request->thirdparty_Activity_comments;
+            $container->thirdparty_persons=$request->thirdparty_persons;
             $container->liability_letter=$request->liability_letter;
             $container->insurance_declaration=$request->insurance_declaration;
             if($request->nature_of_damage["id"]==0){

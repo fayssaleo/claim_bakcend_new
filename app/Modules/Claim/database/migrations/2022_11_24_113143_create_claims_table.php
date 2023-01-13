@@ -14,7 +14,7 @@ return new class extends Migration
             $table->date("claim_date")->nullable();
             $table->date("incident_date")->nullable();
             $table->string("ClaimOrIncident")->nullable();
-            $table->string("status")->nullable();
+            $table->string("status");
             $table->string("incident_report")->nullable();
             $table->timestamps();
         });
