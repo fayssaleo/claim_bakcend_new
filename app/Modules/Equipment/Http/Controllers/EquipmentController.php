@@ -96,6 +96,30 @@ class EquipmentController extends Controller
                     ];
                 }
             }
+
+            if($request->type_of_equipment["id"]==0){
+                if($request->type_of_equipment["name"]!=null || $request->type_of_equipment["name"]!=""){
+                    $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndSave($request->type_of_equipment);
+                    if($type_of_equipment_returnedValue["IsReturnErrorRespone"]){
+                        return [
+                            "payload" => $type_of_equipment_returnedValue["payload"],
+                            "status" => $type_of_equipment_returnedValue["status"]
+                        ];
+                    }
+                    $equipment->type_of_equipment_id=$type_of_equipment_returnedValue["payload"]->id;
+                }
+            }
+            else{
+                $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndUpdate($request->type_of_equipment);
+                $equipment->type_of_equipment_id=$request->type_of_equipment["id"];
+                if($type_of_equipment_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $type_of_equipment_returnedValue["payload"],
+                        "status" => $type_of_equipment_returnedValue["status"]
+                    ];
+                }
+            }
+
             if($request->matricule["id"]==0){
                 if($request->matricule["matricule"]!=null || $request->matricule["matricule"]!=""){
                     $equipmentMatricule_returnedValue=$this->equipmentMatricule_confirmAndSave($request->matricule);
@@ -116,28 +140,6 @@ class EquipmentController extends Controller
                     return [
                         "payload" => $equipmentMatricule_returnedValue["payload"],
                         "status" => $equipmentMatricule_returnedValue["status"]
-                    ];
-                }
-            }
-            if($request->type_of_equipment["id"]==0){
-                if($request->type_of_equipment["name"]!=null || $request->type_of_equipment["name"]!=""){
-                    $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndSave($request->type_of_equipment);
-                    if($type_of_equipment_returnedValue["IsReturnErrorRespone"]){
-                        return [
-                            "payload" => $type_of_equipment_returnedValue["payload"],
-                            "status" => $type_of_equipment_returnedValue["status"]
-                        ];
-                    }
-                    $equipment->type_of_equipment_id=$type_of_equipment_returnedValue["payload"]->id;
-                }
-            }
-            else{
-                $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndUpdate($request->type_of_equipment);
-                $equipment->type_of_equipment_id=$request->type_of_equipment["id"];
-                if($type_of_equipment_returnedValue["IsReturnErrorRespone"]){
-                    return [
-                        "payload" => $type_of_equipment_returnedValue["payload"],
-                        "status" => $type_of_equipment_returnedValue["status"]
                     ];
                 }
             }
@@ -166,6 +168,7 @@ class EquipmentController extends Controller
             $equipment->type_of_equipment= $equipment->typeOfEquipment;
             $equipment->brand= $equipment->brand;
             $equipment->nature_of_damage= $equipment->natureOfDamage;
+            $equipment->matricule= $equipment->matricule;
             return [
                 "payload" => $equipment,
                 "status" => "200"
@@ -190,7 +193,6 @@ class EquipmentController extends Controller
                     "status" => "406_2"
                 ];
                 }
-
                 $equipment=Equipment::find($request->id);
                 if (!$equipment) {
                 return [
@@ -232,7 +234,6 @@ class EquipmentController extends Controller
                 $equipment->incident_report=$request->incident_report;
                 $equipment->liability_letter=$request->liability_letter;
                 $equipment->insurance_declaration=$request->insurance_declaration;
-
                 if($request->nature_of_damage["id"]==0){
                 if($request->nature_of_damage["name"]!=null || $request->nature_of_damage["name"]!=""){
                     $nature_of_damage_returnedValue=$this->nature_of_damage_confirmAndSave($request->nature_of_damage);
@@ -303,7 +304,6 @@ class EquipmentController extends Controller
                     ];
                 }
                 }
-
                 if($request->matricule["id"]==0){
                     if($request->matricule["matricule"]!=null || $request->matricule["matricule"]!=""){
                         $equipmentMatricule_returnedValue=$this->equipmentMatricule_confirmAndSave($request->matricule);
@@ -327,7 +327,6 @@ class EquipmentController extends Controller
                         ];
                     }
                 }
-
                 if($request->file()) {
                 if($request->incident_reportFile!=null && $request->incident_reportFile!=""){
                     $file=$request->incident_reportFile;
@@ -357,14 +356,13 @@ class EquipmentController extends Controller
                 $equipment->type_of_equipment= $equipment->typeOfEquipment;
                 $equipment->brand= $equipment->brand;
                 $equipment->nature_of_damage= $equipment->natureOfDamage;
+                $equipment->matricule= $equipment->matricule;
                 return [
                 "payload" => $equipment,
                 "status" => "200"
                 ];
-
         }
     }
-
     public function index($claim_id){
         $equipment=Equipment::select()->where('claim_id', $claim_id)->with("typeOfEquipment")
         ->with("brand")
@@ -432,7 +430,7 @@ class EquipmentController extends Controller
             ];
         }
         $natureOfDamage=NatureOfDamage::make($NatureOfDamage);
-        $natureOfDamage->categorie="automobile";
+        $natureOfDamage->categorie="equipment";
 
         $natureOfDamage->save();
         return [

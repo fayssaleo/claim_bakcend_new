@@ -21,6 +21,7 @@ class ClaimController extends Controller
             "status" => "200_00"
         ];
     }
+
     public function indexIncidents(){
 
         $claim=Claim::select()->where('ClaimOrIncident', "Incident")->get();
@@ -66,7 +67,7 @@ class ClaimController extends Controller
             ];
         }
         else {
-            $claim->status = "Treated";
+            $claim->status = "On progress";
             $claim->save();
 
             return [
@@ -220,7 +221,6 @@ class ClaimController extends Controller
             "status" => "200"
         ];
     }
-
 
     public function delete(Request $request){
         $claim=Claim::find($request->id);

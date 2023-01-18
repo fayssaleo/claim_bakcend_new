@@ -17,6 +17,8 @@ return new class extends Migration
             $table->bigIncrements("id");
             $table->string("id_equipment")->nullable();
             $table->string("matricule")->nullable();
+            $table->string("equipment")->nullable();
+            $table->string("brand")->nullable();
 
             $table->timestamps();
         });

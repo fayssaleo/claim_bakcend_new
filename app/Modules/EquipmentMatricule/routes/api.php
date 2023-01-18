@@ -9,7 +9,7 @@ Route::group([
     'prefix' => 'api/EquipmentMatricule'
 
 ], function ($router) {
-    Route::get('/', [EquipmentMatriculeController::class, 'index']);
+    Route::get('/{equipment?}', [EquipmentMatriculeController::class, 'index']);
     Route::get('/index/{id}', [EquipmentMatriculeController::class, 'get']);
 
 
