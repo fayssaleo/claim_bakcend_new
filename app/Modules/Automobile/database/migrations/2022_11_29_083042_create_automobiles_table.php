@@ -18,26 +18,24 @@ return new class extends Migration
             $table->bigIncrements("id");
 
             $table->string("name")->nullable();
-            $table->string("categorie_of_equipment")->nullable();
 
             $table->bigInteger("claim_id")->unsigned()->nullable();
             $table->foreign('claim_id')->references('id')->on('claims')->onDelete('cascade');
 
-            $table->bigInteger("type_of_equipment_id")->unsigned()->nullable();
+            $table->bigInteger("type_of_equipment_id")->unsigned();
             $table->foreign('type_of_equipment_id')->references('id')->on('type_of_equipments')->onDelete('cascade');
 
-            $table->bigInteger("brand_id")->unsigned()->nullable();
+            $table->bigInteger("brand_id")->unsigned();
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
 
-            $table->bigInteger("nature_of_damage_id")->unsigned()->nullable();
+            $table->bigInteger("nature_of_damage_id")->unsigned();
             $table->foreign('nature_of_damage_id')->references('id')->on('nature_of_damages')->onDelete('cascade');
 
             $table->bigInteger('department_id')->unsigned()->nullable();
             $table->foreign('department_id')->references('id')->on('departments');
 
             $table->string("concerned_internal_department")->nullable();
-            $table->string("equipement_registration")->nullable();
-            $table->string("cause_damage")->nullable();
+            $table->string("cause_damage");
             $table->string("Liability_letter_number")->nullable();
             $table->double('amount', 20, 4)->nullable();
             $table->string("currency")->nullable();
@@ -54,7 +52,7 @@ return new class extends Migration
             $table->date("Indemnification_date")->nullable();
             $table->string("currency_indemnisation")->nullable();
             $table->double('deductible_charge_TAT', 20, 4)->nullable()->default(5000);
-            $table->string("damage_caused_by")->nullable();
+            $table->string("damage_caused_by");
             $table->string("comment_nature_of_damage")->nullable();
             $table->string("TAT_name_persons")->nullable();
             $table->string("outsourcer_company_name")->nullable();

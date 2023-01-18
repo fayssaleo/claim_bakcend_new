@@ -157,7 +157,11 @@ class DatabaseSeeder extends Seeder
         $equipment_matricule ->save();
 
 //---------------------------------------------------------------------------------------
-
+        $type_of_equipment=new TypeOfEquipment();
+        $type_of_equipment->name="Tablet";
+        $type_of_equipment->categorie="Equipment";
+        $type_of_equipment->save();
+//---------------------------------------------------------------------------------------
         $type_of_equipment=new TypeOfEquipment();
         $type_of_equipment->name="Reach stackers";
         $type_of_equipment->categorie="Equipment";
@@ -231,6 +235,7 @@ class DatabaseSeeder extends Seeder
         $equipment_matricule->equipment="Spreaders RTG";
         $equipment_matricule->brand="BROMMA";
         $equipment_matricule ->save();
+
 //---------------------------------------------------------------------------------------
         $type_of_equipment=new TypeOfEquipment();
         $type_of_equipment->name="Trucks";
@@ -381,8 +386,8 @@ class DatabaseSeeder extends Seeder
 
         $user=new User();
         $user->username="test";
-        $user->lastName="Ourezzouq";
-        $user->firstName="Fayssal";
+        $user->lastName="abdous";
+        $user->firstName="hamza";
         $user->email="test";
         $user->password="test";
         $user->phoneNumber="test";

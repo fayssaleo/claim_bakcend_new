@@ -5,6 +5,7 @@ namespace App\Modules\Equipment\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Libs\UploadTrait;
 use App\Modules\Brand\Models\Brand;
+use App\Modules\Company\Models\Company;
 use App\Modules\Claim\Models\Claim;
 use App\Modules\Equipment\Models\Equipment;
 use App\Modules\File\Models\File;
@@ -97,6 +98,30 @@ class EquipmentController extends Controller
                 }
             }
 
+            if($request->companie["id"]==0){
+                if($request->companie["name"]!=null || $request->companie["name"]!=""){
+                    $companie_returnedValue=$this->companie_confirmAndSave($request->companie);
+
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+                $equipment->companie_id=$companie_returnedValue["payload"]->id;
+                }
+            }
+            else{
+                $companie_returnedValue=$this->companie_confirmAndUpdate($request->companie);
+                $equipment->companie_id=$request->companie["id"];
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+            }
+
             if($request->type_of_equipment["id"]==0){
                 if($request->type_of_equipment["name"]!=null || $request->type_of_equipment["name"]!=""){
                     $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndSave($request->type_of_equipment);
@@ -167,6 +192,7 @@ class EquipmentController extends Controller
             $equipment->claim_id = $equipment->claim->id;
             $equipment->type_of_equipment= $equipment->typeOfEquipment;
             $equipment->brand= $equipment->brand;
+            $equipment->companie= $equipment->companie;
             $equipment->nature_of_damage= $equipment->natureOfDamage;
             $equipment->matricule= $equipment->matricule;
             return [
@@ -203,9 +229,7 @@ class EquipmentController extends Controller
                 $equipment->name=$request->name;
                 $equipment->department_id=$request->department_id;
                 $equipment->deductible_charge_TAT=$request->deductible_charge_TAT;
-                $equipment->categorie_of_equipment=$request->categorie_of_equipment;
                 $equipment->concerned_internal_department=$request->concerned_internal_department;
-                $equipment->equipement_registration=$request->equipement_registration;
                 $equipment->cause_damage=$request->cause_damage;
                 $equipment->Liability_letter_number=$request->Liability_letter_number;
                 $equipment->amount=$request->amount;
@@ -281,6 +305,32 @@ class EquipmentController extends Controller
                     ];
                 }
                 }
+
+                if($request->companie["id"]==0){
+                    if($request->companie["name"]!=null || $request->companie["name"]!=""){
+                        $companie_returnedValue=$this->companie_confirmAndSave($request->companie);
+
+                    if($companie_returnedValue["IsReturnErrorRespone"]){
+                        return [
+                            "payload" => $companie_returnedValue["payload"],
+                            "status" => $companie_returnedValue["status"]
+                        ];
+                    }
+                    $equipment->companie_id=$companie_returnedValue["payload"]->id;
+                    }
+                }
+                else{
+                    $companie_returnedValue=$this->companie_confirmAndUpdate($request->companie);
+                    $equipment->companie_id=$request->companie["id"];
+                    if($companie_returnedValue["IsReturnErrorRespone"]){
+                        return [
+                            "payload" => $companie_returnedValue["payload"],
+                            "status" => $companie_returnedValue["status"]
+                        ];
+                    }
+                }
+
+
                 if($request->type_of_equipment["id"]==0){
                 if($request->type_of_equipment["name"]!=null || $request->type_of_equipment["name"]!=""){
                     $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndSave($request->type_of_equipment);
@@ -355,6 +405,7 @@ class EquipmentController extends Controller
                 $equipment->claim_id = $equipment->claim->id;
                 $equipment->type_of_equipment= $equipment->typeOfEquipment;
                 $equipment->brand= $equipment->brand;
+                $equipment->companie= $equipment->companie;
                 $equipment->nature_of_damage= $equipment->natureOfDamage;
                 $equipment->matricule= $equipment->matricule;
                 return [
@@ -366,6 +417,7 @@ class EquipmentController extends Controller
     public function index($claim_id){
         $equipment=Equipment::select()->where('claim_id', $claim_id)->with("typeOfEquipment")
         ->with("brand")
+        ->with("companie")
         ->with("natureOfDamage")
         ->with("department")
         ->with("matricule")
@@ -454,6 +506,47 @@ class EquipmentController extends Controller
                 $natureOfDamage->save();
                 return [
                     "payload"=>$natureOfDamage,
+                    "status"=>"200",
+                    "IsReturnErrorRespone" => false
+                ];
+            }
+    }
+    public function companie_confirmAndSave($Companie){
+        $validator = Validator::make($Companie, [
+            //"name" => "required:brands,name",
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                "payload" => $validator->errors(),
+                "status" => "406_2"
+            ];
+        }
+
+        $companie=Company::make($Companie);
+        $companie->categorie="equipment";
+
+        $companie->save();
+
+        return [
+            "payload" => $companie,
+            "status" => "200",
+            "IsReturnErrorRespone" => false
+        ];
+    }
+    public function companie_confirmAndUpdate($Companie){
+        $companie=Company::find($Companie['id']);
+            if(!$companie){
+                return [
+                    "payload"=>"companie is not exist !",
+                    "status"=>"404_2",
+                    "IsReturnErrorRespone" => true
+                ];
+            }
+            else if ($Companie){
+                $companie->save();
+                return [
+                    "payload"=>$companie,
                     "status"=>"200",
                     "IsReturnErrorRespone" => false
                 ];

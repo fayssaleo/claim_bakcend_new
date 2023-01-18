@@ -12,6 +12,7 @@ use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\Claim\Models\Claim;
 use App\Modules\Estimate\Models\Estimate;
 use App\Modules\EquipmentMatricule\Models\EquipmentMatricule;
+use App\Modules\Company\Models\Company;
 
 
 class Equipment extends Model
@@ -38,6 +39,11 @@ class Equipment extends Model
     public function natureOfDamage()
     {
         return $this->belongsTo(NatureOfDamage::class);
+    }
+
+    public function companie()
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function department()

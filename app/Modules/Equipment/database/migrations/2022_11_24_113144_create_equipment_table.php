@@ -16,19 +16,21 @@ return new class extends Migration
         Schema::create('equipment', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->string("name")->nullable();
-            $table->string("categorie_of_equipment")->nullable();
 
             $table->bigInteger("claim_id")->unsigned()->nullable();
             $table->foreign('claim_id')->references('id')->on('claims')->onDelete('cascade');
 
-            $table->bigInteger("type_of_equipment_id")->unsigned()->nullable();
+            $table->bigInteger("type_of_equipment_id")->unsigned();
             $table->foreign('type_of_equipment_id')->references('id')->on('type_of_equipments');
 
 
-            $table->bigInteger("brand_id")->unsigned()->nullable();
+            $table->bigInteger("brand_id")->unsigned();
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
 
-            $table->bigInteger("nature_of_damage_id")->unsigned()->nullable();
+            $table->bigInteger("companie_id")->unsigned();
+            $table->foreign('companie_id')->references('id')->on('companies')->onDelete('cascade');
+
+            $table->bigInteger("nature_of_damage_id")->unsigned();
             $table->foreign('nature_of_damage_id')->references('id')->on('nature_of_damages');
 
             $table->bigInteger('department_id')->unsigned()->nullable();
@@ -40,8 +42,7 @@ return new class extends Migration
 
 
             $table->string("concerned_internal_department")->nullable();
-            $table->string("equipement_registration")->nullable();
-            $table->string("cause_damage")->nullable();
+            $table->string("cause_damage");
             $table->string("Liability_letter_number")->nullable();
             $table->double('amount', 20, 4)->nullable();
             $table->string("currency")->nullable();
@@ -58,7 +59,7 @@ return new class extends Migration
             $table->date("Indemnification_date")->nullable();
             $table->string("currency_indemnisation")->nullable();
             $table->double('deductible_charge_TAT', 20, 4)->nullable()->default(5000);
-            $table->string("damage_caused_by")->nullable();
+            $table->string("damage_caused_by");
             $table->string("comment_nature_of_damage")->nullable();
             $table->string("TAT_name_persons")->nullable();
             $table->string("outsourcer_company_name")->nullable();

@@ -25,13 +25,13 @@ return new class extends Migration
             $table->bigInteger("nature_of_damage_id")->unsigned()->nullable();
             $table->foreign('nature_of_damage_id')->references('id')->on('nature_of_damages')->onDelete('cascade');
 
-            $table->bigInteger('shipping_line_id')->unsigned()->nullable();
+            $table->bigInteger('shipping_line_id')->unsigned();
             $table->foreign('shipping_line_id')->references('id')->on('shipping_lines')->onDelete('cascade');
 
 
             $table->string("concerned_internal_department")->nullable();
             $table->string("vessel_number")->nullable();
-            $table->string("cause_damage")->nullable();
+            $table->string("cause_damage");
             $table->string("Liability_letter_number")->nullable();
             $table->double('amount', 20, 4)->nullable();
             $table->string("currency")->nullable();
@@ -48,7 +48,7 @@ return new class extends Migration
             $table->date("Indemnification_date")->nullable();
             $table->string("currency_indemnisation")->nullable();
             $table->double('deductible_charge_TAT', 20, 4)->nullable()->default(5000);
-            $table->string("damage_caused_by")->nullable();
+            $table->string("damage_caused_by");
             $table->string("comment_nature_of_damage")->nullable();
             $table->string("TAT_name_persons")->nullable();
             $table->string("outsourcer_company_name")->nullable();
