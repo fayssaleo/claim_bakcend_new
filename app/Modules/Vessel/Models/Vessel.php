@@ -11,6 +11,7 @@ use App\Modules\TypeOfEquipment\Models\TypeOfEquipment;
 use App\Modules\Department\Models\Department;
 use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\Estimate\Models\Estimate;
+use App\Modules\Company\Models\Company;
 
 class Vessel extends Model
 {
@@ -24,6 +25,12 @@ class Vessel extends Model
     {
         return $this->belongsTo(TypeOfEquipment::class);
     }
+
+    public function companie()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
 
     public function natureOfDamage()
     {

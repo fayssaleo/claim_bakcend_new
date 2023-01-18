@@ -14,6 +14,7 @@ use App\Modules\TypeOfEquipment\Models\TypeOfEquipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Expr\Array_;
+use App\Modules\Company\Models\Company;
 
 class VesselController extends Controller
 {
@@ -71,7 +72,29 @@ class VesselController extends Controller
                 }
             }
 
+            if($request->companie["id"]==0){
+                if($request->companie["name"]!=null || $request->companie["name"]!=""){
+                    $companie_returnedValue=$this->companie_confirmAndSave($request->companie);
 
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+                $vessel->companie_id=$companie_returnedValue["payload"]->id;
+                }
+            }
+            else{
+                $companie_returnedValue=$this->companie_confirmAndUpdate($request->companie);
+                $vessel->companie_id=$request->companie["id"];
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+            }
 
             if($request->shipping_line["id"]==0){
                 if($request->shipping_line["name"]!=null || $request->shipping_line["name"]!=""){
@@ -121,6 +144,8 @@ class VesselController extends Controller
 
             $vessel->claim_id = $vessel->claim->id;
             $vessel->nature_of_damage = $vessel->natureOfDamage;
+            $vessel->companie= $vessel->companie;
+
             $vessel->shipping_line = $vessel->shippingLine;
 
             return [
@@ -239,6 +264,30 @@ class VesselController extends Controller
                 }
             }
 
+            if($request->companie["id"]==0){
+                if($request->companie["name"]!=null || $request->companie["name"]!=""){
+                    $companie_returnedValue=$this->companie_confirmAndSave($request->companie);
+
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+                $vessel->companie_id=$companie_returnedValue["payload"]->id;
+                }
+            }
+            else{
+                $companie_returnedValue=$this->companie_confirmAndUpdate($request->companie);
+                $vessel->companie_id=$request->companie["id"];
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+            }
+
             if($request->file()) {
                 if($request->incident_reportFile!=null && $request->incident_reportFile!=""){
                     $file=$request->incident_reportFile;
@@ -268,6 +317,7 @@ class VesselController extends Controller
 
             $vessel->claim_id = $vessel->claim->id;
             $vessel->nature_of_damage = $vessel->natureOfDamage;
+            $vessel->companie= $vessel->companie;
             $vessel->shipping_line = $vessel->shippingLine;
 
             return [
@@ -280,6 +330,7 @@ class VesselController extends Controller
     public function index($claim_id){
         $vessel=Vessel::select()->where('claim_id', $claim_id)
         ->with("shippingLine")
+        ->with("companie")
         ->with("natureOfDamage")
         ->with("department")
         ->with("estimate.customedField")
@@ -391,6 +442,48 @@ class VesselController extends Controller
             "status" => "200",
             "IsReturnErrorRespone" => false
         ];
+    }
+
+    public function companie_confirmAndSave($Companie){
+        $validator = Validator::make($Companie, [
+            //"name" => "required:brands,name",
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                "payload" => $validator->errors(),
+                "status" => "406_2"
+            ];
+        }
+
+        $companie=Company::make($Companie);
+        $companie->categorie="vessel";
+
+        $companie->save();
+
+        return [
+            "payload" => $companie,
+            "status" => "200",
+            "IsReturnErrorRespone" => false
+        ];
+    }
+    public function companie_confirmAndUpdate($Companie){
+        $companie=Company::find($Companie['id']);
+            if(!$companie){
+                return [
+                    "payload"=>"companie is not exist !",
+                    "status"=>"404_2",
+                    "IsReturnErrorRespone" => true
+                ];
+            }
+            else if ($Companie){
+                $companie->save();
+                return [
+                    "payload"=>$companie,
+                    "status"=>"200",
+                    "IsReturnErrorRespone" => false
+                ];
+            }
     }
     public function shipping_line_confirmAndUpdate($shipping_line){
         $shipping_line=ShippingLine::find($shipping_line['id']);

@@ -11,6 +11,7 @@ use App\Modules\Automobile\Models\Automobile;
 use App\Modules\Claim\Models\Claim;
 use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\TypeOfEquipment\Models\TypeOfEquipment;
+use App\Modules\Company\Models\Company;
 
 class AutomobileController extends Controller
 {
@@ -90,6 +91,31 @@ class AutomobileController extends Controller
                     ];
                 }
             }
+
+            if($request->companie["id"]==0){
+                if($request->companie["name"]!=null || $request->companie["name"]!=""){
+                    $companie_returnedValue=$this->companie_confirmAndSave($request->companie);
+
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+                $automobile->companie_id=$companie_returnedValue["payload"]->id;
+                }
+            }
+            else{
+                $companie_returnedValue=$this->companie_confirmAndUpdate($request->companie);
+                $automobile->companie_id=$request->companie["id"];
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+            }
+
             if($request->type_of_equipment["id"]==0){
                 if($request->type_of_equipment["name"]!=null || $request->type_of_equipment["name"]!=""){
                     $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndSave($request->type_of_equipment);
@@ -137,6 +163,8 @@ class AutomobileController extends Controller
             $automobile->claim_id = $automobile->claim->id;
             $automobile->type_of_equipment= $automobile->typeOfEquipment;
             $automobile->brand= $automobile->brand;
+            $automobile->companie= $automobile->companie;
+
             $automobile->nature_of_damage= $automobile->natureOfDamage;
             return [
                 "payload" => $automobile,
@@ -252,6 +280,30 @@ class AutomobileController extends Controller
                 }
             }
 
+            if($request->companie["id"]==0){
+                if($request->companie["name"]!=null || $request->companie["name"]!=""){
+                    $companie_returnedValue=$this->companie_confirmAndSave($request->companie);
+
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+                $automobile->companie_id=$companie_returnedValue["payload"]->id;
+                }
+            }
+            else{
+                $companie_returnedValue=$this->companie_confirmAndUpdate($request->companie);
+                $automobile->companie_id=$request->companie["id"];
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+            }
+
             if($request->type_of_equipment["id"]==0){
                 if($request->type_of_equipment["name"]!=null || $request->type_of_equipment["name"]!=""){
                     $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndSave($request->type_of_equipment);
@@ -300,6 +352,7 @@ class AutomobileController extends Controller
             $automobile->claim_id = $automobile->claim->id;
             $automobile->type_of_equipment = $automobile->typeOfEquipment;
             $automobile->brand = $automobile->brand;
+            $automobile->companie= $automobile->companie;
             $automobile->nature_of_damage = $automobile->natureOfDamage;
 
             return [
@@ -312,6 +365,7 @@ class AutomobileController extends Controller
         $automobile=Automobile::select()->where('claim_id', $claim_id)
         ->with("typeOfEquipment")
         ->with("brand")
+        ->with("companie")
         ->with("natureOfDamage")
         ->with("department")
         ->with("estimate.customedField")
@@ -397,6 +451,48 @@ class AutomobileController extends Controller
                 $natureOfDamage->save();
                 return [
                     "payload"=>$natureOfDamage,
+                    "status"=>"200",
+                    "IsReturnErrorRespone" => false
+                ];
+            }
+    }
+
+    public function companie_confirmAndSave($Companie){
+        $validator = Validator::make($Companie, [
+            //"name" => "required:brands,name",
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                "payload" => $validator->errors(),
+                "status" => "406_2"
+            ];
+        }
+
+        $companie=Company::make($Companie);
+        $companie->categorie="automobile";
+
+        $companie->save();
+
+        return [
+            "payload" => $companie,
+            "status" => "200",
+            "IsReturnErrorRespone" => false
+        ];
+    }
+    public function companie_confirmAndUpdate($Companie){
+        $companie=Company::find($Companie['id']);
+            if(!$companie){
+                return [
+                    "payload"=>"companie is not exist !",
+                    "status"=>"404_2",
+                    "IsReturnErrorRespone" => true
+                ];
+            }
+            else if ($Companie){
+                $companie->save();
+                return [
+                    "payload"=>$companie,
                     "status"=>"200",
                     "IsReturnErrorRespone" => false
                 ];

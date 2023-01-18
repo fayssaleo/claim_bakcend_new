@@ -11,6 +11,7 @@ use App\Modules\Department\Models\Department;
 use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\Claim\Models\Claim;
 use App\Modules\Estimate\Models\Estimate;
+use App\Modules\Company\Models\Company;
 
 class Automobile extends Model
 {
@@ -29,6 +30,12 @@ class Automobile extends Model
     {
         return $this->belongsTo(NatureOfDamage::class);
     }
+
+    public function companie()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
     public function department()
     {
         return $this->belongsTo(Department::class);

@@ -10,6 +10,7 @@ use App\Modules\Claim\Models\Claim;
 use App\Modules\Container\Models\Container;
 use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\ShippingLine\Models\ShippingLine;
+use App\Modules\Company\Models\Company;
 
 class ContainerController extends Controller
 {
@@ -67,6 +68,31 @@ class ContainerController extends Controller
                 }
             }
 
+            if($request->companie["id"]==0){
+                if($request->companie["name"]!=null || $request->companie["name"]!=""){
+                    $companie_returnedValue=$this->companie_confirmAndSave($request->companie);
+
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+                $container->companie_id=$companie_returnedValue["payload"]->id;
+                }
+            }
+            else{
+                $companie_returnedValue=$this->companie_confirmAndUpdate($request->companie);
+                $container->companie_id=$request->companie["id"];
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+            }
+
+
             if($request->shipping_line["id"]==0){
                 if($request->shipping_line["name"]!=null || $request->shipping_line["name"]!=""){
                     $shipping_line_returnedValue=$this->shipping_line_confirmAndSave($request->shipping_line);
@@ -109,6 +135,7 @@ class ContainerController extends Controller
             $container->save();
             $container->claim_id = $container->claim->id;
             $container->nature_of_damage = $container->natureOfDamage;
+            $container->companie = $container->companie;
             $container->shipping_line = $container->shippingLine;
 
             return [
@@ -227,6 +254,32 @@ class ContainerController extends Controller
                     ];
                 }
             }
+
+            if($request->companie["id"]==0){
+                if($request->companie["name"]!=null || $request->companie["name"]!=""){
+                    $companie_returnedValue=$this->companie_confirmAndSave($request->companie);
+
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+                $container->companie_id=$companie_returnedValue["payload"]->id;
+                }
+            }
+            else{
+                $companie_returnedValue=$this->companie_confirmAndUpdate($request->companie);
+                $container->companie_id=$request->companie["id"];
+                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $companie_returnedValue["payload"],
+                        "status" => $companie_returnedValue["status"]
+                    ];
+                }
+            }
+
+
             if($request->file()) {
 
                 if($request->liability_letterFile!=null && $request->liability_letterFile!=""){
@@ -250,6 +303,7 @@ class ContainerController extends Controller
 
             $container->claim_id = $container->claim->id;
             $container->nature_of_damage = $container->natureOfDamage;
+            $container->companie = $container->companie;
             $container->shipping_line = $container->shippingLine;
 
             return [
@@ -264,6 +318,7 @@ class ContainerController extends Controller
         $container=Container::select()->where('claim_id', $claim_id)
         ->with("shippingLine")
         ->with("natureOfDamage")
+        ->with("companie")
         ->with("department")
         ->with("estimate")
         ->with("estimate.customedField")
@@ -358,6 +413,49 @@ class ContainerController extends Controller
                 ];
             }
     }
+
+    public function companie_confirmAndSave($Companie){
+        $validator = Validator::make($Companie, [
+            //"name" => "required:brands,name",
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                "payload" => $validator->errors(),
+                "status" => "406_2"
+            ];
+        }
+
+        $companie=Company::make($Companie);
+        $companie->categorie="container";
+
+        $companie->save();
+
+        return [
+            "payload" => $companie,
+            "status" => "200",
+            "IsReturnErrorRespone" => false
+        ];
+    }
+    public function companie_confirmAndUpdate($Companie){
+        $companie=Company::find($Companie['id']);
+            if(!$companie){
+                return [
+                    "payload"=>"companie is not exist !",
+                    "status"=>"404_2",
+                    "IsReturnErrorRespone" => true
+                ];
+            }
+            else if ($Companie){
+                $companie->save();
+                return [
+                    "payload"=>$companie,
+                    "status"=>"200",
+                    "IsReturnErrorRespone" => false
+                ];
+            }
+    }
+
 
     public function shipping_line_confirmAndSave($shipping_line){
         $validator = Validator::make($shipping_line, [
