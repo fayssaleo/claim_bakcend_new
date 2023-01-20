@@ -12,6 +12,7 @@ use App\Modules\Container\Models\Container;
 use App\Modules\Vessel\Models\Vessel;
 use App\Modules\Estimate\Models\fileEstimates;
 use App\Modules\CustomedField\Models\CustomedField;
+use App\Modules\EstimateFile\Models\EstimateFile;
 
 class Estimate extends Model
 {
@@ -37,7 +38,9 @@ class Estimate extends Model
         return $this->belongsTo(Vessel::class);
     }
 
-  
+    public function estimateFile(){
+        return $this->hasMany(EstimateFile::class);
+    }
     public function customedField()
     {
         return $this->hasMany(CustomedField::class);

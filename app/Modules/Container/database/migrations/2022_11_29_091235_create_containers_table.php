@@ -25,7 +25,7 @@ return new class extends Migration
             $table->bigInteger("type_of_equipment_id")->unsigned()->nullable();
             $table->foreign('type_of_equipment_id')->references('id')->on('type_of_equipments')->onDelete('cascade');
 
-            $table->bigInteger("companie_id")->unsigned();
+            $table->bigInteger("companie_id")->unsigned()->nullable();
             $table->foreign('companie_id')->references('id')->on('companies')->onDelete('cascade');
 
 

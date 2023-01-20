@@ -10,6 +10,7 @@ use App\Modules\Estimate\Models\Estimate;
 use \stdClass;
 use App\Libs\UploadTrait;
 use App\Modules\CustomedField\Models\CustomedField;
+use App\Modules\EstimateFile\Models\EstimateFile;
 
 class EstimateController extends Controller
 {
@@ -23,6 +24,7 @@ class EstimateController extends Controller
         $estimate = Estimate::select()
             ->where('equipment_id', "=", $id)
             ->with("customedField")
+            ->with("estimateFile")
             ->get();
         $amount = 0;
 
@@ -157,14 +159,19 @@ class EstimateController extends Controller
         }
         $estimate = Estimate::make($request->all());
         //if (!empty($request->file) || $request->file != null || $request->file != "update" ) {
-        if ($request->file != "create") {
+            $estimate->save();
+            if($request->file()) {
+                for ($i=0;$i<count($request["files"]);$i++){
+                    $file=$request["files"][$i];
+                    $filename=time()."_".$file->getClientOriginalName();
+                    $this->uploadOne($file, config('cdn.fileEstimates.path'), $filename, 'public_uploads_fileEstimates');
+                    $estimateFile=new EstimateFile();
+                    $estimateFile->filename=$filename;
+                    $estimateFile->estimate_id=$estimate->id;
+                    $estimateFile->save();
+                }
+            }
 
-            $file = $request->file;
-            $filename = time() . "_" . $file->getClientOriginalName();
-            $this->uploadOne($file, config('cdn.fileEstimates.path'), $filename, 'public_uploads_fileEstimates');
-            $estimate->fileName = $filename;
-        }
-        $estimate->save();
         $estimate->customedFields = [];
         $datacustomedFields = [];
         $amount = 0;
@@ -238,43 +245,34 @@ class EstimateController extends Controller
 
         $amount = 0;
 
-         if (!empty($request->file) && $request->file != null ) {
-            if ($request->file != "create") {
-                $file = $request->file;
-                $filename = time() . "_" . $file->getClientOriginalName();
-                $this->uploadOne($file, config('cdn.fileEstimates.path'), $filename, 'public_uploads_fileEstimates');
-                $estimate->fileName = $filename;
-            }
-
-        }
-         if ($request->file == "delete") {
-            if ($request->fileName == null) {
-                $estimate->fileName = null;
-            }
-        }
-
-
-
-        // dd($estimate);
-
-        // delete CustomedField
-
-        $customedFieldsByEstimateID=CustomedField::select()->where('estimate_id', $estimate->id)
-        ->get();
-        //dd($request);
-       /*  if (!empty($request->customedFields)) {
-            if (!empty($request->deleteInputs)) {
-                for ($i=0; $i <count($request->deleteInputs) ; $i++) {
-                    for ($j=0; $j < count($customedFieldsByEstimateID) ; $j++) {
-                        if ($customedFieldsByEstimateID[$j]["id"]==$request->deleteInputs[$i]["id"]) {
-                            $customedFieldToDelete = CustomedField::find($customedFieldsByEstimateID[$j]->id);
-                            $customedFieldToDelete->delete();
-                        }
-                    }
+         if (!empty($request["files"]) && $request["files"] != null ) {
+            if ($request["files"] != "create") {
+                for ($i=0;$i<count($request["files"]);$i++){
+                    $file=$request["files"][$i];
+                    $filename=time()."_".$file->getClientOriginalName();
+                    $this->uploadOne($file, config('cdn.fileEstimates.path'), $filename, 'public_uploads_fileEstimates');
+                    $estimateFile=new EstimateFile();
+                    $estimateFile->filename=$filename;
+                    $estimateFile->estimate_id=$estimate->id;
+                    $estimateFile->save();
                 }
             }
 
-        } */
+        }
+        if (!empty($request["filesDelete"]) && $request["filesDelete"] != null ) {
+            for ($i=0;$i<count($request["filesDelete"]);$i++){
+                $estimateFile=EstimateFile::find($request["filesDelete"][$i]["id"]);
+                $this->deleteOne(config('cdn.fileEstimates.path'),$estimateFile->filename);
+                $estimateFile->delete();
+            }
+        }
+
+
+
+
+        $customedFieldsByEstimateID=CustomedField::select()->where('estimate_id', $estimate->id)
+        ->get();
+
         if (!empty($request->deleteInputs)) {
             for ($i=0; $i <count($request->deleteInputs) ; $i++) {
                     $customedFieldToDelete = CustomedField::find($request->deleteInputs[$i]["id"]);
@@ -300,6 +298,8 @@ class EstimateController extends Controller
         }
         $estimate->save();
         $estimate->customedFields = CustomedField::select()->where('estimate_id', $estimate->id)
+        ->get();
+        $estimate->estimate_file = EstimateFile::select()->where('estimate_id', $estimate->id)
         ->get();
 
         $EstimateModel = new stdClass();

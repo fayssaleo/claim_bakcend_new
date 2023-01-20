@@ -27,7 +27,7 @@ return new class extends Migration
             $table->bigInteger("brand_id")->unsigned();
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
 
-            $table->bigInteger("companie_id")->unsigned();
+            $table->bigInteger("companie_id")->unsigned()->nullable();
             $table->foreign('companie_id')->references('id')->on('companies')->onDelete('cascade');
 
             $table->bigInteger("nature_of_damage_id")->unsigned();
