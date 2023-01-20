@@ -176,6 +176,7 @@ class EstimateController extends Controller
         $estimate->otherValuations = [];
         $dataotherValuations = [];
         $amount = 0;
+        
         if (!empty($request->otherValuations)) {
             for ($i = 0; $i < count($request->otherValuations); $i++) {
 
@@ -187,7 +188,7 @@ class EstimateController extends Controller
 
                 array_push($dataotherValuations,$otherValuation);
 
-                $amount = $request->otherValuations[$i]["value"];
+                $amount = $request->otherValuations[$i]["value_valuation"];
             }
         }
         $estimate->otherValuations = $dataotherValuations;
