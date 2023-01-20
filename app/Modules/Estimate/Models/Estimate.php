@@ -13,6 +13,7 @@ use App\Modules\Vessel\Models\Vessel;
 use App\Modules\Estimate\Models\fileEstimates;
 use App\Modules\CustomedField\Models\CustomedField;
 use App\Modules\EstimateFile\Models\EstimateFile;
+use App\Modules\OtherValuation\Models\OtherValuation;
 
 class Estimate extends Model
 {
@@ -40,6 +41,9 @@ class Estimate extends Model
 
     public function estimateFile(){
         return $this->hasMany(EstimateFile::class);
+    }
+    public function otherValuation(){
+        return $this->hasMany(OtherValuation::class);
     }
     public function customedField()
     {

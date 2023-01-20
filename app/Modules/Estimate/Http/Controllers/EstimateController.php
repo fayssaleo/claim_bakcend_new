@@ -11,6 +11,7 @@ use \stdClass;
 use App\Libs\UploadTrait;
 use App\Modules\CustomedField\Models\CustomedField;
 use App\Modules\EstimateFile\Models\EstimateFile;
+use App\Modules\OtherValuation\Models\OtherValuation;
 
 class EstimateController extends Controller
 {
@@ -172,24 +173,24 @@ class EstimateController extends Controller
                 }
             }
 
-        $estimate->customedFields = [];
-        $datacustomedFields = [];
+        $estimate->otherValuations = [];
+        $dataotherValuations = [];
         $amount = 0;
-        if (!empty($request->customedFields)) {
-            for ($i = 0; $i < count($request->customedFields); $i++) {
+        if (!empty($request->otherValuations)) {
+            for ($i = 0; $i < count($request->otherValuations); $i++) {
 
 
-                $customedField = CustomedField::make($request->customedFields[$i]);
-                $customedField->estimate_id = $estimate->id;
+                $otherValuation = OtherValuation::make($request->otherValuations[$i]);
+                $otherValuation->estimate_id = $estimate->id;
 
-                $customedField->save();
+                $otherValuation->save();
 
-                array_push($datacustomedFields,$customedField);
+                array_push($dataotherValuations,$otherValuation);
 
-                $amount = $request->customedFields[$i]["value"];
+                $amount = $request->otherValuations[$i]["value"];
             }
         }
-        $estimate->customedFields = $datacustomedFields;
+        $estimate->otherValuations = $dataotherValuations;
         $EstimateModel = new stdClass();
 
 
@@ -640,7 +641,7 @@ class EstimateController extends Controller
         ->get();
         $estimate->estimate_file = EstimateFile::select()->where('estimate_id', $estimate->id)
         ->get();
-        
+
         $EstimateModel = new stdClass();
         $EstimateModel->estimate = $estimate;
         $EstimateModel->estimate_amount = $amount + (float) $estimate->equipment_purchase_costs + (float) $estimate->installation_and_facilities_costs + (float) $estimate->rransportation_costs;
@@ -680,4 +681,48 @@ class EstimateController extends Controller
             ];
         }
     }
+
+
+    public function otherValuation_confirmAndSave($OtherValuation){
+        $validator = Validator::make($OtherValuation, [
+            //"name" => "required:brands,name",
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                "payload" => $validator->errors(),
+                "status" => "406_2"
+            ];
+        }
+
+        $otherValuation=OtherValuation::make($OtherValuation);
+
+        $otherValuation->save();
+
+        return [
+            "payload" => $otherValuation,
+            "status" => "200",
+            "IsReturnErrorRespone" => false
+        ];
+    }
+    public function otherValuation_confirmAndUpdate($OtherValuation){
+        $otherValuation=OtherValuation::find($OtherValuation['id']);
+            if(!$otherValuation){
+                return [
+                    "payload"=>"brand is not exist !",
+                    "status"=>"404_2",
+                    "IsReturnErrorRespone" => true
+                ];
+            }
+            else if ($otherValuation){
+                //$brand->name=$Brand['name'];
+                $otherValuation->save();
+                return [
+                    "payload"=>$otherValuation,
+                    "status"=>"200",
+                    "IsReturnErrorRespone" => false
+                ];
+            }
+    }
+
 }

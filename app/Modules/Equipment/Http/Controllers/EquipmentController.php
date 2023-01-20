@@ -594,6 +594,9 @@ class EquipmentController extends Controller
                 ];
             }
     }
+
+
+
     public function type_of_equipment_confirmAndSave($Type_of_equipment){
         $validator = Validator::make($Type_of_equipment, [
             //"name" => "required:type_of_equipments,name",
