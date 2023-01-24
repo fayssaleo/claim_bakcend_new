@@ -415,42 +415,48 @@ class EquipmentController extends Controller
         }
     }
     public function index($claim_id){
-        $equipment=Equipment::select()->where('claim_id', $claim_id)->with("typeOfEquipment")
+        $equipment=Equipment::select()
+        ->where('claim_id', $claim_id)
+        ->with("typeOfEquipment")
         ->with("brand")
         ->with("companie")
         ->with("natureOfDamage")
         ->with("department")
         ->with("matricule")
         ->with("estimate")
-        ->with("estimate.customedField")
+        ->with("estimate.otherValuation")
         ->get();
 
-        for ($j=0; $j < count($equipment)  ; $j++) {
-            $calculated = false;
-            $totalAmount = 0;
-            $currency = "";
-            $AmountCustomedField = 0;
-            for ($i = count($equipment[$j]->estimate)-1; $i >= 0; $i--) {
-                if($equipment[$j]->estimate[$i]->temporary_or_permanent=="Permanent" && !$calculated){
-                    for ($d = 0; $d < count($equipment[$j]->estimate[$i]->customedField); $d++) {
-                        $AmountCustomedField += $equipment[$j]->estimate[$i]->customedField[$d]->value;
+       
 
+            for ($j=0; $j < count($equipment)  ; $j++) {
+                $calculated = false;
+                $totalAmount = 0;
+                $currency = "";
+                $AmountCustomedField = 0;
+                for ($i = count($equipment[$j]->estimate)-1; $i >= 0; $i--) {
+                   // dd($equipment[$j]->estimate[$i]->otherValuation);
+                    if($equipment[$j]->estimate[$i]->temporary_or_permanent=="Permanent" && !$calculated){
+                        for ($d = 0; $d < count($equipment[$j]->estimate[$i]->otherValuation); $d++) {
+                            $AmountCustomedField += $equipment[$j]->estimate[$i]->otherValuation[$d]->value_valuation;
+
+                        }
+                        $totalAmount += $AmountCustomedField ;
+                        $calculated = true;
+                        $currency = $equipment[$j]->estimate[$i]->currency_estimate;
                     }
-                    $totalAmount += $AmountCustomedField +
-                     $equipment[$j]->estimate[$i]->equipment_purchase_costs +
-                      $equipment[$j]->estimate[$i]->installation_and_facilities_costs +
-                       $equipment[$j]->estimate[$i]->rransportation_costs;
-                    $calculated = true;
-                    $currency = $equipment[$j]->estimate[$i]->currency_estimate;
+
                 }
 
+                $equipment[$j]->estimationAmount = $totalAmount . " (" . $currency . ")";
             }
 
-            $equipment[$j]->estimationAmount = $totalAmount." (".$currency.")";
-        }
+
 
         return [
             "payload" => $equipment,
+            "totalAmount" => "fffff",
+
             "status" => "200_1"
         ];
     }

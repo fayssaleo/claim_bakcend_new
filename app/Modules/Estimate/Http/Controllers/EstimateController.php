@@ -24,26 +24,27 @@ class EstimateController extends Controller
         $estimtesWithAmount = collect([]);
         $estimate = Estimate::select()
             ->where('equipment_id', "=", $id)
-            ->with("customedField")
+            ->with("otherValuation")
             ->with("estimateFile")
             ->get();
         $amount = 0;
 
         for ($i = 0; $i < count($estimate); $i++) {
-            //$amount = 0;
+            $amount = 0;
 
-            $customedFieldsByEstimateID=CustomedField::select()->where('estimate_id', $estimate[$i]->id)
+            $otherValuationsByEstimateID=OtherValuation::select()->where('estimate_id', $estimate[$i]->id)
             ->get();
-             for ($j = 0; $j < count($customedFieldsByEstimateID); $j++) {
+
+             for ($j = 0; $j < count($otherValuationsByEstimateID); $j++) {
 
 
-                $amount = $customedFieldsByEstimateID[$j]["value"] + $amount;
+                $amount = $otherValuationsByEstimateID[$j]["value_valuation"] + $amount;
             }
 
             $EstimateModel = new stdClass();
 
             $EstimateModel->estimate = $estimate[$i];
-            $EstimateModel->estimate_amount = $amount + $estimate[$i]->equipment_purchase_costs + $estimate[$i]->installation_and_facilities_costs + $estimate[$i]->rransportation_costs;
+            $EstimateModel->estimate_amount = $amount;
 
             $estimtesWithAmount->push($EstimateModel);
         }
@@ -58,13 +59,24 @@ class EstimateController extends Controller
         $estimtesWithAmount = collect([]);
         $estimate = Estimate::select()
             ->where('container_id', "=", $id)
-            ->with("customedField")
+            ->with("otherValuation")
+            ->with("estimateFile")
             ->get();
-        for ($i = 0; $i < count($estimate); $i++) {
-            $EstimateModel = new stdClass();
+        $amount = 0;
 
+        for ($i = 0; $i < count($estimate); $i++) {
+            $amount = 0;
+            $otherValuationsByEstimateID=OtherValuation::select()->where('estimate_id', $estimate[$i]->id)
+            ->get();
+             for ($j = 0; $j < count($otherValuationsByEstimateID); $j++) {
+
+
+                $amount = $otherValuationsByEstimateID[$j]["value_valuation"] + $amount;
+            }
+
+            $EstimateModel = new stdClass();
             $EstimateModel->estimate = $estimate[$i];
-            $EstimateModel->estimate_amount = $estimate[$i]->equipment_purchase_costs + $estimate[$i]->installation_and_facilities_costs + $estimate[$i]->rransportation_costs;
+            $EstimateModel->estimate_amount =  $amount;
 
             $estimtesWithAmount->push($EstimateModel);
         }
@@ -79,13 +91,22 @@ class EstimateController extends Controller
         $estimtesWithAmount = collect([]);
         $estimate = Estimate::select()
             ->where('automobile_id', "=", $id)
-            ->with("customedField")
+            ->with("otherValuation")
+            ->with("estimateFile")
             ->get();
+        $amount = 0;
         for ($i = 0; $i < count($estimate); $i++) {
-            $EstimateModel = new stdClass();
+            $amount = 0;
+            $otherValuationsByEstimateID=OtherValuation::select()->where('estimate_id', $estimate[$i]->id)
+            ->get();
+             for ($j = 0; $j < count($otherValuationsByEstimateID); $j++) {
 
+
+                $amount = $otherValuationsByEstimateID[$j]["value_valuation"] + $amount;
+            }
+            $EstimateModel = new stdClass();
             $EstimateModel->estimate = $estimate[$i];
-            $EstimateModel->estimate_amount = $estimate[$i]->equipment_purchase_costs + $estimate[$i]->installation_and_facilities_costs + $estimate[$i]->rransportation_costs;
+            $EstimateModel->estimate_amount =$amount;
 
             $estimtesWithAmount->push($EstimateModel);
         }
@@ -100,13 +121,25 @@ class EstimateController extends Controller
         $estimtesWithAmount = collect([]);
         $estimate = Estimate::select()
             ->where('vessel_id', "=", $id)
-            ->with("customedField")
+            ->with("otherValuation")
+            ->with("estimateFile")
             ->get();
+        $amount = 0;
+
         for ($i = 0; $i < count($estimate); $i++) {
+            $amount = 0;
+            $otherValuationsByEstimateID=OtherValuation::select()->where('estimate_id', $estimate[$i]->id)
+            ->get();
+             for ($j = 0; $j < count($otherValuationsByEstimateID); $j++) {
+
+
+                $amount = $otherValuationsByEstimateID[$j]["value_valuation"] + $amount;
+            }
+
             $EstimateModel = new stdClass();
 
             $EstimateModel->estimate = $estimate[$i];
-            $EstimateModel->estimate_amount = $estimate[$i]->equipment_purchase_costs + $estimate[$i]->installation_and_facilities_costs + $estimate[$i]->rransportation_costs;
+            $EstimateModel->estimate_amount =$amount;
 
             $estimtesWithAmount->push($EstimateModel);
         }
@@ -176,7 +209,7 @@ class EstimateController extends Controller
         $estimate->otherValuations = [];
         $dataotherValuations = [];
         $amount = 0;
-        
+
         if (!empty($request->otherValuations)) {
             for ($i = 0; $i < count($request->otherValuations); $i++) {
 
@@ -196,7 +229,7 @@ class EstimateController extends Controller
 
 
         $EstimateModel->estimate = $estimate;
-        $EstimateModel->estimate_amount = $amount + $estimate->equipment_purchase_costs + $estimate->installation_and_facilities_costs + $estimate->rransportation_costs;
+        $EstimateModel->estimate_amount = $amount ;
 
         //  dd($EstimateModel);
 
@@ -205,8 +238,6 @@ class EstimateController extends Controller
             "status" => "200"
         ];
     }
-
-
 
     public function sendEstimateFileStoragePath()
     {
@@ -236,9 +267,6 @@ class EstimateController extends Controller
         }
 
         $estimate->temporary_or_permanent = $request->temporary_or_permanent;
-        $estimate->equipment_purchase_costs = $request->equipment_purchase_costs;
-        $estimate->installation_and_facilities_costs = $request->installation_and_facilities_costs;
-        $estimate->rransportation_costs = $request->rransportation_costs;
         $estimate->currency_estimate = $request->currency_estimate;
         $estimate->equipment_id = $request->equipment_id;
         $estimate->created_at = $estimate->created_at;
@@ -247,6 +275,7 @@ class EstimateController extends Controller
 
         $amount = 0;
 
+        //add other files
          if (!empty($request["files"]) && $request["files"] != null ) {
             if ($request["files"] != "create") {
                 for ($i=0;$i<count($request["files"]);$i++){
@@ -261,6 +290,7 @@ class EstimateController extends Controller
             }
 
         }
+        // delete files
         if (!empty($request["filesDelete"]) && $request["filesDelete"] != null ) {
             for ($i=0;$i<count($request["filesDelete"]);$i++){
                 $estimateFile=EstimateFile::find($request["filesDelete"][$i]["id"]);
@@ -272,41 +302,52 @@ class EstimateController extends Controller
 
 
 
-        $customedFieldsByEstimateID=CustomedField::select()->where('estimate_id', $estimate->id)
+        $otherValuationsByEstimateID=OtherValuation::select()->where('estimate_id', $estimate->id)
         ->get();
-
+        // delete otherValuations
         if (!empty($request->deleteInputs)) {
             for ($i=0; $i <count($request->deleteInputs) ; $i++) {
-                    $customedFieldToDelete = CustomedField::find($request->deleteInputs[$i]["id"]);
-                    $customedFieldToDelete->delete();
+                    $otherValuationToDelete = OtherValuation::find($request->deleteInputs[$i]["id"]);
+                    $otherValuationToDelete->delete();
             }
         }
 
-        // add new CustomedField >8999
+        // add or update otherValuations
 
-        if (!empty($request->customedFields)) {
-            for ($j = 0; $j < count($request->customedFields); $j++) {
-                // $amount = 0;
+        if (!empty($request->otherValuations)) {
+            for ($j = 0; $j < count($request->otherValuations); $j++) {
+                 $amount = 0;
+                // add new otherValuations if id == 0
+                if ($request->otherValuations[$j]["id"] == 0) {
 
-                if ($request->customedFields[$j]["id"] > 8999) {
+                    $otherValuation = OtherValuation::make($request->otherValuations[$j]);
+                    $otherValuation->estimate_id = $estimate->id;
 
-                    $customedField = CustomedField::make((array) $request->customedFields[$j]);
-                    $customedField->estimate_id = $estimate->id;
+                    $otherValuation->save();
+                    $amount = $request->otherValuations[$j]["value_valuation"] + $amount;
+                }
+                else {
+                    $otherValuation=OtherValuation::find($request->otherValuations[$j]["id"]);
+                    $otherValuation->name = $request->otherValuations[$j]["name"];
+                    $otherValuation->currency = $request->otherValuations[$j]["currency"];
+                    $otherValuation->value = $request->otherValuations[$j]["value"];
+                    $otherValuation->taux_change = $request->otherValuations[$j]["taux_change"];
+                    $otherValuation->value_valuation = $request->otherValuations[$j]["value_valuation"];
+                    $otherValuation->save();
 
-                    $customedField->save();
-                    $amount = $request->customedFields[$j]["value"]  + $amount;
                 }
             }
         }
+
         $estimate->save();
-        $estimate->customedFields = CustomedField::select()->where('estimate_id', $estimate->id)
+        $estimate->otherValuations = OtherValuation::select()->where('estimate_id', $estimate->id)
         ->get();
         $estimate->estimate_file = EstimateFile::select()->where('estimate_id', $estimate->id)
         ->get();
 
         $EstimateModel = new stdClass();
         $EstimateModel->estimate = $estimate;
-        $EstimateModel->estimate_amount = $amount + (float) $estimate->equipment_purchase_costs + (float) $estimate->installation_and_facilities_costs + (float) $estimate->rransportation_costs;
+        $EstimateModel->estimate_amount = $amount ;
 
 
 
@@ -314,7 +355,7 @@ class EstimateController extends Controller
 
         return [
             "payload" => $EstimateModel,
-            "customedFieldsByEstimateID" => $customedFieldsByEstimateID,
+            "otherValuationsByEstimateID" => $otherValuationsByEstimateID,
             "request->deleteInputs" => $request->deleteInputs,
             "status" => "200_00"
         ];
@@ -339,9 +380,6 @@ class EstimateController extends Controller
         }
 
         $estimate->temporary_or_permanent = $request->temporary_or_permanent;
-        $estimate->equipment_purchase_costs = $request->equipment_purchase_costs;
-        $estimate->installation_and_facilities_costs = $request->installation_and_facilities_costs;
-        $estimate->rransportation_costs = $request->rransportation_costs;
         $estimate->currency_estimate = $request->currency_estimate;
         $estimate->container_id = $request->container_id;
         $estimate->created_at = $estimate->created_at;
@@ -380,46 +418,49 @@ class EstimateController extends Controller
 
         $customedFieldsByEstimateID=CustomedField::select()->where('estimate_id', $estimate->id)
         ->get();
-        if (!empty($request->customedFields)) {
-
-            if (!empty($request->deleteInputs)) {
-                for ($i=0; $i <count($request->deleteInputs) ; $i++) {
-                    for ($j=0; $j < count($customedFieldsByEstimateID) ; $j++) {
-                        if ($customedFieldsByEstimateID[$j]["id"]==$request->deleteInputs[$i]["id"]) {
-                            $customedFieldToDelete = CustomedField::find($customedFieldsByEstimateID[$j]->id);
-                            $customedFieldToDelete->delete();
-                        }
-                    }
-                }
+        // delete otherValuations
+        if (!empty($request->deleteInputs)) {
+            for ($i=0; $i <count($request->deleteInputs) ; $i++) {
+                    $otherValuationToDelete = OtherValuation::find($request->deleteInputs[$i]["id"]);
+                    $otherValuationToDelete->delete();
             }
-
         }
 
-        // add new CustomedField >8999
+        // add or update otherValuations
 
-        if (!empty($request->customedFields)) {
-            for ($j = 0; $j < count($request->customedFields); $j++) {
-                // $amount = 0;
+        if (!empty($request->otherValuations)) {
+            for ($j = 0; $j < count($request->otherValuations); $j++) {
+                 $amount = 0;
+                // add new otherValuations if id == 0
+                if ($request->otherValuations[$j]["id"] == 0) {
 
-                if ($request->customedFields[$j]["id"] > 8999) {
+                    $otherValuation = OtherValuation::make($request->otherValuations[$j]);
+                    $otherValuation->estimate_id = $estimate->id;
 
-                    $customedField = CustomedField::make((array) $request->customedFields[$j]);
-                    $customedField->estimate_id = $estimate->id;
+                    $otherValuation->save();
+                    $amount = $request->otherValuations[$j]["value_valuation"] + $amount;
+                }
+                else {
+                    $otherValuation=OtherValuation::find($request->otherValuations[$j]["id"]);
+                    $otherValuation->name = $request->otherValuations[$j]["name"];
+                    $otherValuation->currency = $request->otherValuations[$j]["currency"];
+                    $otherValuation->value = $request->otherValuations[$j]["value"];
+                    $otherValuation->taux_change = $request->otherValuations[$j]["taux_change"];
+                    $otherValuation->value_valuation = $request->otherValuations[$j]["value_valuation"];
+                    $otherValuation->save();
 
-                    $customedField->save();
-                    $amount = $request->customedFields[$j]["value"]  + $amount;
                 }
             }
         }
         $estimate->save();
-        $estimate->customedFields = CustomedField::select()->where('estimate_id', $estimate->id)
+        $estimate->otherValuations = OtherValuation::select()->where('estimate_id', $estimate->id)
         ->get();
         $estimate->estimate_file = EstimateFile::select()->where('estimate_id', $estimate->id)
         ->get();
 
         $EstimateModel = new stdClass();
         $EstimateModel->estimate = $estimate;
-        $EstimateModel->estimate_amount = $amount + (float) $estimate->equipment_purchase_costs + (float) $estimate->installation_and_facilities_costs + (float) $estimate->rransportation_costs;
+        $EstimateModel->estimate_amount = $amount;
 
 
 
@@ -453,9 +494,6 @@ class EstimateController extends Controller
         }
 
         $estimate->temporary_or_permanent = $request->temporary_or_permanent;
-        $estimate->equipment_purchase_costs = $request->equipment_purchase_costs;
-        $estimate->installation_and_facilities_costs = $request->installation_and_facilities_costs;
-        $estimate->rransportation_costs = $request->rransportation_costs;
         $estimate->currency_estimate = $request->currency_estimate;
         $estimate->automobile_id = $request->automobile_id;
         $estimate->created_at = $estimate->created_at;
@@ -493,46 +531,49 @@ class EstimateController extends Controller
 
         $customedFieldsByEstimateID=CustomedField::select()->where('estimate_id', $estimate->id)
         ->get();
-        if (!empty($request->customedFields)) {
-
-            if (!empty($request->deleteInputs)) {
-                for ($i=0; $i <count($request->deleteInputs) ; $i++) {
-                    for ($j=0; $j < count($customedFieldsByEstimateID) ; $j++) {
-                        if ($customedFieldsByEstimateID[$j]["id"]==$request->deleteInputs[$i]["id"]) {
-                            $customedFieldToDelete = CustomedField::find($customedFieldsByEstimateID[$j]->id);
-                            $customedFieldToDelete->delete();
-                        }
-                    }
-                }
+        // delete otherValuations
+        if (!empty($request->deleteInputs)) {
+            for ($i=0; $i <count($request->deleteInputs) ; $i++) {
+                    $otherValuationToDelete = OtherValuation::find($request->deleteInputs[$i]["id"]);
+                    $otherValuationToDelete->delete();
             }
-
         }
 
-        // add new CustomedField >8999
+        // add or update otherValuations
 
-        if (!empty($request->customedFields)) {
-            for ($j = 0; $j < count($request->customedFields); $j++) {
-                // $amount = 0;
+        if (!empty($request->otherValuations)) {
+            for ($j = 0; $j < count($request->otherValuations); $j++) {
+                $amount = 0;
+                // add new otherValuations if id == 0
+                if ($request->otherValuations[$j]["id"] == 0) {
 
-                if ($request->customedFields[$j]["id"] > 8999) {
+                    $otherValuation = OtherValuation::make($request->otherValuations[$j]);
+                    $otherValuation->estimate_id = $estimate->id;
 
-                    $customedField = CustomedField::make((array) $request->customedFields[$j]);
-                    $customedField->estimate_id = $estimate->id;
+                    $otherValuation->save();
+                    $amount = $request->otherValuations[$j]["value_valuation"] + $amount;
+                }
+                else {
+                    $otherValuation=OtherValuation::find($request->otherValuations[$j]["id"]);
+                    $otherValuation->name = $request->otherValuations[$j]["name"];
+                    $otherValuation->currency = $request->otherValuations[$j]["currency"];
+                    $otherValuation->value = $request->otherValuations[$j]["value"];
+                    $otherValuation->taux_change = $request->otherValuations[$j]["taux_change"];
+                    $otherValuation->value_valuation = $request->otherValuations[$j]["value_valuation"];
+                    $otherValuation->save();
 
-                    $customedField->save();
-                    $amount = $request->customedFields[$j]["value"]  + $amount;
                 }
             }
         }
         $estimate->save();
-        $estimate->customedFields = CustomedField::select()->where('estimate_id', $estimate->id)
+        $estimate->otherValuations = OtherValuation::select()->where('estimate_id', $estimate->id)
         ->get();
         $estimate->estimate_file = EstimateFile::select()->where('estimate_id', $estimate->id)
         ->get();
 
         $EstimateModel = new stdClass();
         $EstimateModel->estimate = $estimate;
-        $EstimateModel->estimate_amount = $amount + (float) $estimate->equipment_purchase_costs + (float) $estimate->installation_and_facilities_costs + (float) $estimate->rransportation_costs;
+        $EstimateModel->estimate_amount = $amount ;
 
 
 
@@ -565,9 +606,6 @@ class EstimateController extends Controller
         }
 
         $estimate->temporary_or_permanent = $request->temporary_or_permanent;
-        $estimate->equipment_purchase_costs = $request->equipment_purchase_costs;
-        $estimate->installation_and_facilities_costs = $request->installation_and_facilities_costs;
-        $estimate->rransportation_costs = $request->rransportation_costs;
         $estimate->currency_estimate = $request->currency_estimate;
         $estimate->vessel_id = $request->vessel_id;
         $estimate->created_at = $estimate->created_at;
@@ -606,46 +644,51 @@ class EstimateController extends Controller
 
         $customedFieldsByEstimateID=CustomedField::select()->where('estimate_id', $estimate->id)
         ->get();
-        if (!empty($request->customedFields)) {
-
-            if (!empty($request->deleteInputs)) {
-                for ($i=0; $i <count($request->deleteInputs) ; $i++) {
-                    for ($j=0; $j < count($customedFieldsByEstimateID) ; $j++) {
-                        if ($customedFieldsByEstimateID[$j]["id"]==$request->deleteInputs[$i]["id"]) {
-                            $customedFieldToDelete = CustomedField::find($customedFieldsByEstimateID[$j]->id);
-                            $customedFieldToDelete->delete();
-                        }
-                    }
-                }
+        // delete otherValuations
+        if (!empty($request->deleteInputs)) {
+            for ($i=0; $i <count($request->deleteInputs) ; $i++) {
+                    $otherValuationToDelete = OtherValuation::find($request->deleteInputs[$i]["id"]);
+                    $otherValuationToDelete->delete();
             }
-
         }
 
-        // add new CustomedField >8999
+        // add new otherValuations if id == 0
 
-        if (!empty($request->customedFields)) {
-            for ($j = 0; $j < count($request->customedFields); $j++) {
-                // $amount = 0;
+        // add or update otherValuations
 
-                if ($request->customedFields[$j]["id"] > 8999) {
+        if (!empty($request->otherValuations)) {
+            for ($j = 0; $j < count($request->otherValuations); $j++) {
+                $amount = 0;
+                // add new otherValuations if id == 0
+                if ($request->otherValuations[$j]["id"] == 0) {
 
-                    $customedField = CustomedField::make((array) $request->customedFields[$j]);
-                    $customedField->estimate_id = $estimate->id;
+                    $otherValuation = OtherValuation::make($request->otherValuations[$j]);
+                    $otherValuation->estimate_id = $estimate->id;
 
-                    $customedField->save();
-                    $amount = $request->customedFields[$j]["value"]  + $amount;
+                    $otherValuation->save();
+                    $amount = $request->otherValuations[$j]["value_valuation"] + $amount;
+                }
+                else {
+                    $otherValuation=OtherValuation::find($request->otherValuations[$j]["id"]);
+                    $otherValuation->name = $request->otherValuations[$j]["name"];
+                    $otherValuation->currency = $request->otherValuations[$j]["currency"];
+                    $otherValuation->value = $request->otherValuations[$j]["value"];
+                    $otherValuation->taux_change = $request->otherValuations[$j]["taux_change"];
+                    $otherValuation->value_valuation = $request->otherValuations[$j]["value_valuation"];
+                    $otherValuation->save();
+
                 }
             }
         }
         $estimate->save();
-        $estimate->customedFields = CustomedField::select()->where('estimate_id', $estimate->id)
+        $estimate->otherValuations = OtherValuation::select()->where('estimate_id', $estimate->id)
         ->get();
         $estimate->estimate_file = EstimateFile::select()->where('estimate_id', $estimate->id)
         ->get();
 
         $EstimateModel = new stdClass();
         $EstimateModel->estimate = $estimate;
-        $EstimateModel->estimate_amount = $amount + (float) $estimate->equipment_purchase_costs + (float) $estimate->installation_and_facilities_costs + (float) $estimate->rransportation_costs;
+        $EstimateModel->estimate_amount = $amount;
 
 
 

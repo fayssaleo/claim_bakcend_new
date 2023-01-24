@@ -333,8 +333,8 @@ class VesselController extends Controller
         ->with("companie")
         ->with("natureOfDamage")
         ->with("department")
-        ->with("estimate.customedField")
-        //->with("estimate")
+        ->with("estimate")
+        ->with("estimate.otherValuation")
         ->get();
 
         for ($j=0; $j < count($vessel)  ; $j++) {
@@ -343,21 +343,20 @@ class VesselController extends Controller
             $currency = "";
             $AmountCustomedField = 0;
             for ($i = count($vessel[$j]->estimate)-1; $i >= 0; $i--) {
+               // dd($vessel[$j]->estimate[$i]->otherValuation);
                 if($vessel[$j]->estimate[$i]->temporary_or_permanent=="Permanent" && !$calculated){
-                    for ($d = 0; $d < count($vessel[$j]->estimate[$i]->customedField); $d++) {
-                        $AmountCustomedField += $vessel[$j]->estimate[$i]->customedField[$d]->value;
+                    for ($d = 0; $d < count($vessel[$j]->estimate[$i]->otherValuation); $d++) {
+                        $AmountCustomedField += $vessel[$j]->estimate[$i]->otherValuation[$d]->value_valuation;
 
                     }
-                    $totalAmount += $AmountCustomedField +
-                     $vessel[$j]->estimate[$i]->equipment_purchase_costs +
-                      $vessel[$j]->estimate[$i]->installation_and_facilities_costs +
-                       $vessel[$j]->estimate[$i]->rransportation_costs;
+                    $totalAmount += $AmountCustomedField ;
                     $calculated = true;
                     $currency = $vessel[$j]->estimate[$i]->currency_estimate;
                 }
 
             }
-            $vessel[$j]->estimationAmount = $totalAmount." (".$currency.")";
+
+            $vessel[$j]->estimationAmount = $totalAmount . " (" . $currency . ")";
         }
 
             return [

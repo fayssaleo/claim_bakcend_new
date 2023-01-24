@@ -368,7 +368,8 @@ class AutomobileController extends Controller
         ->with("companie")
         ->with("natureOfDamage")
         ->with("department")
-        ->with("estimate.customedField")
+        ->with("estimate")
+        ->with("estimate.otherValuation")
         ->get();
 
         for ($j=0; $j < count($automobile)  ; $j++) {
@@ -377,21 +378,20 @@ class AutomobileController extends Controller
             $currency = "";
             $AmountCustomedField = 0;
             for ($i = count($automobile[$j]->estimate)-1; $i >= 0; $i--) {
+               // dd($automobile[$j]->estimate[$i]->otherValuation);
                 if($automobile[$j]->estimate[$i]->temporary_or_permanent=="Permanent" && !$calculated){
-                    for ($d = 0; $d < count($automobile[$j]->estimate[$i]->customedField); $d++) {
-                        $AmountCustomedField += $automobile[$j]->estimate[$i]->customedField[$d]->value;
+                    for ($d = 0; $d < count($automobile[$j]->estimate[$i]->otherValuation); $d++) {
+                        $AmountCustomedField += $automobile[$j]->estimate[$i]->otherValuation[$d]->value_valuation;
 
                     }
-                    $totalAmount += $AmountCustomedField +
-                     $automobile[$j]->estimate[$i]->equipment_purchase_costs +
-                      $automobile[$j]->estimate[$i]->installation_and_facilities_costs +
-                       $automobile[$j]->estimate[$i]->rransportation_costs;
+                    $totalAmount += $AmountCustomedField ;
                     $calculated = true;
                     $currency = $automobile[$j]->estimate[$i]->currency_estimate;
                 }
 
             }
-            $automobile[$j]->estimationAmount = $totalAmount." (".$currency.")";
+
+            $automobile[$j]->estimationAmount = $totalAmount . " (" . $currency . ")";
         }
 
         return [

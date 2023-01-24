@@ -17,10 +17,6 @@ return new class extends Migration
             $table->bigIncrements("id");
             $table->string("temporary_or_permanent")->nullable();
             $table->string("currency_estimate")->nullable();
-            $table->string("fileName")->nullable();
-            $table->double('equipment_purchase_costs', 20, 4)->nullable();
-            $table->double('installation_and_facilities_costs', 20, 4)->nullable();
-            $table->double('rransportation_costs', 20, 4)->nullable();
 
             $table->bigInteger('equipment_id')->unsigned()->nullable();
             $table->foreign('equipment_id')->references('id')->on('equipment')->onDelete('cascade');
