@@ -5,6 +5,7 @@ namespace App\Modules\Claim\Models;
 use App\Modules\Automobile\Models\Automobile;
 use App\Modules\Container\Models\Container;
 use App\Modules\Equipment\Models\Equipment;
+use App\Modules\ClaimOrIncidentFile\Models\ClaimOrIncidentFile;
 use App\Modules\Vessel\Models\Vessel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +32,11 @@ class Claim extends Model
     public function automobiles(){
         return $this->hasMany(Automobile::class);
     }
+
+    public function claimOrIncidentFile(){
+        return $this->hasMany(ClaimOrIncidentFile::class);
+    }
+
 
     protected $casts = [
         'created_at' => 'datetime:m/d/Y H:i',

@@ -12,6 +12,7 @@ use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\Claim\Models\Claim;
 use App\Modules\Estimate\Models\Estimate;
 use App\Modules\Company\Models\Company;
+use App\Modules\LiabilityInsuranceFiles\Models\LiabilityInsuranceFiles;
 
 class Automobile extends Model
 {
@@ -48,6 +49,11 @@ class Automobile extends Model
     {
         return $this->hasMany(Estimate::class);
     }
+    public function liabilityInsuranceFiles()
+    {
+        return $this->hasMany(LiabilityInsuranceFiles::class);
+    }
+
     protected $casts = [
         'created_at' => 'datetime:m/d/Y H:i',
         'updated_at' => 'datetime:m/d/Y H:i',

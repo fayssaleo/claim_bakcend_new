@@ -12,6 +12,7 @@ use App\Modules\Department\Models\Department;
 use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\Estimate\Models\Estimate;
 use App\Modules\Company\Models\Company;
+use App\Modules\LiabilityInsuranceFiles\Models\LiabilityInsuranceFiles;
 
 class Vessel extends Model
 {
@@ -50,6 +51,11 @@ class Vessel extends Model
     {
         return $this->belongsTo(ShippingLine::class);
     }
+    public function liabilityInsuranceFiles()
+    {
+        return $this->hasMany(LiabilityInsuranceFiles::class);
+    }
+
     protected $casts = [
         'created_at' => 'datetime:m/d/Y H:i',
         'updated_at' => 'datetime:m/d/Y H:i',

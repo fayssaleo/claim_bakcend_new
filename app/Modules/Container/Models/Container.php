@@ -13,6 +13,8 @@ use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\Claim\Models\Claim;
 use App\Modules\Company\Models\Company;
 use App\Modules\Estimate\Models\Estimate;
+use App\Modules\LiabilityInsuranceFiles\Models\LiabilityInsuranceFiles;
+
 class Container extends Model
 {
     use HasFactory;
@@ -46,7 +48,10 @@ class Container extends Model
     public function shippingLine(){
         return $this->belongsTo(ShippingLine::class);
     }
-
+    public function liabilityInsuranceFiles()
+    {
+        return $this->hasMany(LiabilityInsuranceFiles::class);
+    }
     protected $casts = [
         'created_at' => 'datetime:m/d/Y H:i',
         'updated_at' => 'datetime:m/d/Y H:i',

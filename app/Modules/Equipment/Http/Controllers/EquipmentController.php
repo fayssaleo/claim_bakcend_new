@@ -378,28 +378,21 @@ class EquipmentController extends Controller
                     }
                 }
                 if($request->file()) {
-                if($request->incident_reportFile!=null && $request->incident_reportFile!=""){
-                    $file=$request->incident_reportFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_incident_report");
-                    $equipment->incident_report=$filename;
-                }
-                if($request->liability_letterFile!=null && $request->liability_letterFile!=""){
-                    $file=$request->liability_letterFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_liability_letter");
-                    $equipment->liability_letter=$filename;
 
+                    if($request->liability_letterFile!=null && $request->liability_letterFile!=""){
+                        $file=$request->liability_letterFile;
+                        $filename=time()."_".$file->getClientOriginalName();
+                        $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_liability_letter");
+                        $equipment->liability_letter=$filename;
 
+                    }
+                    if($request->insurance_declarationFile!=null && $request->insurance_declarationFile!=""){
+                        $file=$request->insurance_declarationFile;
+                        $filename=time()."_".$file->getClientOriginalName();
+                        $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_insurance_declaration");
+                        $equipment->insurance_declaration=$filename;
 
-                }
-                if($request->insurance_declarationFile!=null && $request->insurance_declarationFile!=""){
-                    $file=$request->insurance_declarationFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_insurance_declaration");
-                    $equipment->insurance_declaration=$filename;
-
-                }
+                    }
                 }
                 $equipment->save();
                 $equipment->claim_id = $equipment->claim->id;
@@ -427,7 +420,7 @@ class EquipmentController extends Controller
         ->with("estimate.otherValuation")
         ->get();
 
-       
+
 
             for ($j=0; $j < count($equipment)  ; $j++) {
                 $calculated = false;

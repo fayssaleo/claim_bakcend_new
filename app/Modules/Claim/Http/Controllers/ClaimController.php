@@ -4,6 +4,7 @@ namespace App\Modules\Claim\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Claim\Models\Claim;
+use App\Modules\ClaimOrIncidentFile\Models\ClaimOrIncidentFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Libs\UploadTrait;
@@ -125,16 +126,19 @@ class ClaimController extends Controller
             if($claim->status=="" || $claim->status==null){
                 $claim->status = "On progress";
             }
+            $claim->save();
             if($request->file()) {
-                if($request->incident_reportFile!=null){
-                    $file=$request->incident_reportFile;
+                for ($i=0;$i<count($request["files"]);$i++){
+                    $file=$request["files"][$i];
                     $filename=time()."_".$file->getClientOriginalName();
                     $this->uploadOne($file, config('cdn.claim.path'),$filename,"public_uploads_claim_incident_report");
-                    $claim->incident_report=$filename;
+                    $claimOrIncidentFile=new ClaimOrIncidentFile();
+                    $claimOrIncidentFile->filename=$filename;
+                    $claimOrIncidentFile->claim_id=$claim->id;
+                    $claimOrIncidentFile->save();
                 }
 
             }
-            $claim->save();
             return [
                 "payload" => $claim,
                 "status" => "200"
@@ -167,16 +171,29 @@ class ClaimController extends Controller
             $claim->claim_date=$request->claim_date;
             $claim->incident_date=$request->incident_date;
             $claim->ClaimOrIncident=$request->ClaimOrIncident;
+
+            $claim->save();
+            
             if($request->file()) {
-                if($request->incident_reportFile!=null){
-                    $file=$request->incident_reportFile;
+                for ($i=0;$i<count($request["files"]);$i++){
+                    $file=$request["files"][$i];
                     $filename=time()."_".$file->getClientOriginalName();
                     $this->uploadOne($file, config('cdn.claim.path'),$filename,"public_uploads_claim_incident_report");
-                    $claim->incident_report=$filename;
+                    $claimOrIncidentFile=new ClaimOrIncidentFile();
+                    $claimOrIncidentFile->filename=$filename;
+                    $claimOrIncidentFile->claim_id=$claim->id;
+                    $claimOrIncidentFile->save();
                 }
 
             }
-            $claim->save();
+            // delete files
+            if (!empty($request["filesDelete"]) && $request["filesDelete"] != null ) {
+                for ($i=0;$i<count($request["filesDelete"]);$i++){
+                    $claimOrIncidentFile=ClaimOrIncidentFile::find($request["filesDelete"][$i]["id"]);
+                    $this->deleteOne(config('cdn.claim.path'),$claimOrIncidentFile->filename);
+                    $claimOrIncidentFile->delete();
+                }
+            }
             return [
                 "payload" => $claim,
                 "status" => "200"
@@ -211,6 +228,30 @@ class ClaimController extends Controller
                     "status" => "406_2"
                 ];
         }
+        //add other files
+
+        if($request->file()) {
+            for ($i=0;$i<count($request["files"]);$i++){
+                $file=$request["files"][$i];
+                $filename=time()."_".$file->getClientOriginalName();
+                $this->uploadOne($file, config('cdn.claim.path'),$filename,"public_uploads_claim_incident_report");
+                $claimOrIncidentFile=new ClaimOrIncidentFile();
+                $claimOrIncidentFile->filename=$filename;
+                $claimOrIncidentFile->claim_id=$claim->id;
+                $claimOrIncidentFile->save();
+            }
+
+        }
+        // delete files
+        if (!empty($request["filesDelete"]) && $request["filesDelete"] != null ) {
+            for ($i=0;$i<count($request["filesDelete"]);$i++){
+                $claimOrIncidentFile=ClaimOrIncidentFile::find($request["filesDelete"][$i]["id"]);
+                $this->deleteOne(config('cdn.claim.path'),$claimOrIncidentFile->filename);
+                $claimOrIncidentFile->delete();
+            }
+        }
+
+
         $claim->claim_date=$request->claim_date;
         $claim->incident_date=$request->incident_date;
         $claim->ClaimOrIncident=$request->ClaimOrIncident;

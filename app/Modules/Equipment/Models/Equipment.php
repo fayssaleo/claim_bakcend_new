@@ -13,6 +13,7 @@ use App\Modules\Claim\Models\Claim;
 use App\Modules\Estimate\Models\Estimate;
 use App\Modules\EquipmentMatricule\Models\EquipmentMatricule;
 use App\Modules\Company\Models\Company;
+use App\Modules\LiabilityInsuranceFiles\Models\LiabilityInsuranceFiles;
 
 
 class Equipment extends Model
@@ -60,6 +61,10 @@ class Equipment extends Model
     public function estimate()
     {
         return $this->hasMany(Estimate::class);
+    }
+    public function liabilityInsuranceFiles()
+    {
+        return $this->hasMany(LiabilityInsuranceFiles::class);
     }
 
 
