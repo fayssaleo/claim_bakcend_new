@@ -12,14 +12,16 @@ use App\Modules\Claim\Models\Claim;
 use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\TypeOfEquipment\Models\TypeOfEquipment;
 use App\Modules\Company\Models\Company;
+use App\Modules\LiabilityInsuranceFiles\Models\LiabilityInsuranceFiles;
 
 class AutomobileController extends Controller
 {
     use UploadTrait;
-    public function createOrUpdateAutomobile(Request $request){
-        if($request->id==0){
+    public function createOrUpdateAutomobile(Request $request)
+    {
+        if ($request->id == 0) {
             $validator = Validator::make($request->all(), [
-              //  "name" => "required:brand,name",
+                //  "name" => "required:brand,name",
             ]);
             if ($validator->fails()) {
                 return [
@@ -28,12 +30,11 @@ class AutomobileController extends Controller
                 ];
             }
             $claim = null;
-            if($request->claim_id==0){
+            if ($request->claim_id == 0) {
                 $claim = new Claim();
                 $claim->save();
-            }
-            else{
-                $claim=Claim::find($request->claim_id);
+            } else {
+                $claim = Claim::find($request->claim_id);
                 if (!$claim) {
                     return [
                         "payload" => "The searched claim does not exist !",
@@ -41,50 +42,48 @@ class AutomobileController extends Controller
                     ];
                 }
             }
-            $automobile=Automobile::make($request->all());
+            $automobile = Automobile::make($request->all());
             $automobile->claim_id = $claim->id;
 
 
-            if($request->nature_of_damage["id"]==0){
-                if($request->nature_of_damage["name"]!=null || $request->nature_of_damage["name"]!=""){
-                    $nature_of_damage_returnedValue=$this->nature_of_damage_confirmAndSave($request->nature_of_damage);
-                        if($nature_of_damage_returnedValue["IsReturnErrorRespone"]){
-                            return [
-                                "payload" => $nature_of_damage_returnedValue["payload"],
-                                "status" => $nature_of_damage_returnedValue["status"]
-                            ];
-                        }
-                        $automobile->nature_of_damage_id=$nature_of_damage_returnedValue["payload"]->id;
+            if ($request->nature_of_damage["id"] == 0) {
+                if ($request->nature_of_damage["name"] != null || $request->nature_of_damage["name"] != "") {
+                    $nature_of_damage_returnedValue = $this->nature_of_damage_confirmAndSave($request->nature_of_damage);
+                    if ($nature_of_damage_returnedValue["IsReturnErrorRespone"]) {
+                        return [
+                            "payload" => $nature_of_damage_returnedValue["payload"],
+                            "status" => $nature_of_damage_returnedValue["status"]
+                        ];
+                    }
+                    $automobile->nature_of_damage_id = $nature_of_damage_returnedValue["payload"]->id;
                 }
-
             } else {
-                $nature_of_damage_returnedValue=$this->nature_of_damage_confirmAndUpdate($request->nature_of_damage);
-                $automobile->nature_of_damage_id=$request->nature_of_damage["id"];
+                $nature_of_damage_returnedValue = $this->nature_of_damage_confirmAndUpdate($request->nature_of_damage);
+                $automobile->nature_of_damage_id = $request->nature_of_damage["id"];
 
-                if($nature_of_damage_returnedValue["IsReturnErrorRespone"]){
+                if ($nature_of_damage_returnedValue["IsReturnErrorRespone"]) {
                     return [
                         "payload" => $nature_of_damage_returnedValue["payload"],
                         "status" => $nature_of_damage_returnedValue["status"]
                     ];
                 }
             }
-            if($request->brand["id"]==0){
-                if($request->brand["name"]!=null || $request->brand["name"]!=""){
-                    $brand_returnedValue=$this->brand_confirmAndSave($request->brand);
+            if ($request->brand["id"] == 0) {
+                if ($request->brand["name"] != null || $request->brand["name"] != "") {
+                    $brand_returnedValue = $this->brand_confirmAndSave($request->brand);
 
-                if($brand_returnedValue["IsReturnErrorRespone"]){
-                    return [
-                        "payload" => $brand_returnedValue["payload"],
-                        "status" => $brand_returnedValue["status"]
-                    ];
+                    if ($brand_returnedValue["IsReturnErrorRespone"]) {
+                        return [
+                            "payload" => $brand_returnedValue["payload"],
+                            "status" => $brand_returnedValue["status"]
+                        ];
+                    }
+                    $automobile->brand_id = $brand_returnedValue["payload"]->id;
                 }
-                $automobile->brand_id=$brand_returnedValue["payload"]->id;
-                }
-            }
-            else{
-                $band_returnedValue=$this->brand_confirmAndUpdate($request->brand);
-                $automobile->brand_id=$request->brand["id"];
-                if($band_returnedValue["IsReturnErrorRespone"]){
+            } else {
+                $band_returnedValue = $this->brand_confirmAndUpdate($request->brand);
+                $automobile->brand_id = $request->brand["id"];
+                if ($band_returnedValue["IsReturnErrorRespone"]) {
                     return [
                         "payload" => $band_returnedValue["payload"],
                         "status" => $band_returnedValue["status"]
@@ -92,46 +91,44 @@ class AutomobileController extends Controller
                 }
             }
 
-            if($request->companie["id"]==0){
-                if($request->companie["name"]!=null || $request->companie["name"]!=""){
-                    $companie_returnedValue=$this->companie_confirmAndSave($request->companie);
+            if ($request->companie["id"] == 0) {
+                if ($request->companie["name"] != null || $request->companie["name"] != "") {
+                    $companie_returnedValue = $this->companie_confirmAndSave($request->companie);
 
-                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    if ($companie_returnedValue["IsReturnErrorRespone"]) {
+                        return [
+                            "payload" => $companie_returnedValue["payload"],
+                            "status" => $companie_returnedValue["status"]
+                        ];
+                    }
+                    $automobile->companie_id = $companie_returnedValue["payload"]->id;
+                }
+            } else {
+                $companie_returnedValue = $this->companie_confirmAndUpdate($request->companie);
+                $automobile->companie_id = $request->companie["id"];
+                if ($companie_returnedValue["IsReturnErrorRespone"]) {
                     return [
                         "payload" => $companie_returnedValue["payload"],
                         "status" => $companie_returnedValue["status"]
                     ];
                 }
-                $automobile->companie_id=$companie_returnedValue["payload"]->id;
-                }
-            }
-            else{
-                $companie_returnedValue=$this->companie_confirmAndUpdate($request->companie);
-                $automobile->companie_id=$request->companie["id"];
-                if($companie_returnedValue["IsReturnErrorRespone"]){
-                    return [
-                        "payload" => $companie_returnedValue["payload"],
-                        "status" => $companie_returnedValue["status"]
-                    ];
-                }
             }
 
-            if($request->type_of_equipment["id"]==0){
-                if($request->type_of_equipment["name"]!=null || $request->type_of_equipment["name"]!=""){
-                    $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndSave($request->type_of_equipment);
-                    if($type_of_equipment_returnedValue["IsReturnErrorRespone"]){
+            if ($request->type_of_equipment["id"] == 0) {
+                if ($request->type_of_equipment["name"] != null || $request->type_of_equipment["name"] != "") {
+                    $type_of_equipment_returnedValue = $this->type_of_equipment_confirmAndSave($request->type_of_equipment);
+                    if ($type_of_equipment_returnedValue["IsReturnErrorRespone"]) {
                         return [
                             "payload" => $type_of_equipment_returnedValue["payload"],
                             "status" => $type_of_equipment_returnedValue["status"]
                         ];
                     }
-                    $automobile->type_of_equipment_id=$type_of_equipment_returnedValue["payload"]->id;
+                    $automobile->type_of_equipment_id = $type_of_equipment_returnedValue["payload"]->id;
                 }
-            }
-            else{
-                $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndUpdate($request->type_of_equipment);
-                $automobile->type_of_equipment_id=$request->type_of_equipment["id"];
-                if($type_of_equipment_returnedValue["IsReturnErrorRespone"]){
+            } else {
+                $type_of_equipment_returnedValue = $this->type_of_equipment_confirmAndUpdate($request->type_of_equipment);
+                $automobile->type_of_equipment_id = $request->type_of_equipment["id"];
+                if ($type_of_equipment_returnedValue["IsReturnErrorRespone"]) {
                     return [
                         "payload" => $type_of_equipment_returnedValue["payload"],
                         "status" => $type_of_equipment_returnedValue["status"]
@@ -139,116 +136,119 @@ class AutomobileController extends Controller
                 }
             }
 
-            if($request->file()) {
-                if($request->incident_reportFile!=null){
-                    $file=$request->incident_reportFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_equipments_incident_report");
-                    $automobile->incident_report=$filename;
+            $automobile->save();
+            if ($request->file()) {
+                if (!empty($request["liability_letter_files"]) && $request["liability_letter_files"] != null) {
+
+                    for ($i = 0; $i < count($request["liability_letter_files"]); $i++) {
+                        $file = $request["liability_letter_files"][$i];
+                        $filename = time() . "_" . $file->getClientOriginalName();
+                        $this->uploadOne($file, config('cdn.automobiles.path'), $filename, "public_uploads_automobiles_liability_letter");
+                        $LiabilityInsuranceFile = new LiabilityInsuranceFiles();
+                        $LiabilityInsuranceFile->filename = $filename;
+                        $LiabilityInsuranceFile->type = "liability";
+                        $LiabilityInsuranceFile->automobile_id = $automobile->id;
+                        $LiabilityInsuranceFile->save();
+                    }
                 }
-                if($request->liability_letterFile!=null){
-                    $file=$request->liability_letterFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_automobiles_liability_letter");
-                    $automobile->liability_letter=$filename;
-                }
-                if($request->insurance_declarationFile!=null){
-                    $file=$request->insurance_declarationFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_automobiles_insurance_declaration");
-                    $automobile->insurance_declaration=$filename;
+                if (!empty($request["insurance_declaration_files"]) && $request["insurance_declaration_files"] != null) {
+
+                    for ($i = 0; $i < count($request["insurance_declaration_files"]); $i++) {
+                        $file = $request["insurance_declaration_files"][$i];
+                        $filename = time() . "_" . $file->getClientOriginalName();
+                        $this->uploadOne($file, config('cdn.automobiles.path'), $filename, "public_uploads_automobiles_insurance_declaration");
+                        $LiabilityInsuranceFile = new LiabilityInsuranceFiles();
+                        $LiabilityInsuranceFile->filename = $filename;
+                        $LiabilityInsuranceFile->type = "insurance";
+                        $LiabilityInsuranceFile->automobile_id = $automobile->id;
+                        $LiabilityInsuranceFile->save();
+                    }
                 }
             }
-            $automobile->save();
             $automobile->claim_id = $automobile->claim->id;
-            $automobile->type_of_equipment= $automobile->typeOfEquipment;
-            $automobile->brand= $automobile->brand;
-            $automobile->companie= $automobile->companie;
+            $automobile->type_of_equipment = $automobile->typeOfEquipment;
+            $automobile->brand = $automobile->brand;
+            $automobile->companie = $automobile->companie;
 
-            $automobile->nature_of_damage= $automobile->natureOfDamage;
+            $automobile->nature_of_damage = $automobile->natureOfDamage;
             return [
                 "payload" => $automobile,
                 "status" => "200"
             ];
-        }
-        else {
+        } else {
 
-                $claim=Claim::find($request->claim_id);
-                if (!$claim) {
-                    return [
-                        "payload" => "The searched claim does not exist !",
-                        "status" => "404_3"
-                    ];
-                }
-               // $claim->claimOrIncident = $request->claimOrIncident;
-                $claim->save();
-                $validator = Validator::make($request->all(), [
-            ]);
+            $claim = Claim::find($request->claim_id);
+            if (!$claim) {
+                return [
+                    "payload" => "The searched claim does not exist !",
+                    "status" => "404_3"
+                ];
+            }
+            // $claim->claimOrIncident = $request->claimOrIncident;
+            $claim->save();
+            $validator = Validator::make($request->all(), []);
             if ($validator->fails()) {
                 return [
                     "payload" => $validator->errors(),
                     "status" => "406_2"
                 ];
             }
-            $automobile=Automobile::find($request->id);
+            $automobile = Automobile::find($request->id);
             if (!$automobile) {
                 return [
                     "payload" => "The searched row does not exist !",
                     "status" => "404_3"
                 ];
             }
-            $automobile->name=$request->name;
-            $automobile->department_id=$request->department_id;
-            $automobile->deductible_charge_TAT=$request->deductible_charge_TAT;
-            $automobile->categorie_of_equipment=$request->categorie_of_equipment;
-            $automobile->concerned_internal_department=$request->concerned_internal_department;
-            $automobile->equipement_registration=$request->equipement_registration;
-            $automobile->cause_damage=$request->cause_damage;
-            $automobile->Liability_letter_number=$request->Liability_letter_number;
-            $automobile->amount=$request->amount;
-            $automobile->currency=$request->currency;
-            $automobile->comment_third_party=$request->comment_third_party;
-            $automobile->reinvoiced=$request->reinvoiced;
-            $automobile->currency_Insurance=$request->currency_Insurance;
-            $automobile->Invoice_number=$request->Invoice_number;
-            $automobile->date_of_reimbursement=$request->date_of_reimbursement;
-            $automobile->reimbursed_amount=$request->reimbursed_amount;
-            $automobile->date_of_declaration=$request->date_of_declaration;
-            $automobile->date_of_feedback=$request->date_of_feedback;
-            $automobile->comment_Insurance=$request->comment_Insurance;
-            $automobile->Indemnification_of_insurer=$request->Indemnification_of_insurer;
-            $automobile->Indemnification_date=$request->Indemnification_date;
-            $automobile->currency_indemnisation=$request->currency_indemnisation;
-            $automobile->deductible_charge_TAT=$request->deductible_charge_TAT;
-            $automobile->damage_caused_by=$request->damage_caused_by;
-            $automobile->comment_nature_of_damage=$request->comment_nature_of_damage;
-            $automobile->TAT_name_persons=$request->TAT_name_persons;
-            $automobile->outsourcer_company_name=$request->outsourcer_company_name;
-            $automobile->outsourcer_persons=$request->outsourcer_persons;
-            $automobile->thirdparty_company_name=$request->thirdparty_company_name;
-            $automobile->thirdparty_persons=$request->thirdparty_persons;
-            $automobile->thirdparty_Activity_comments=$request->thirdparty_Activity_comments;
-            $automobile->incident_report=$request->incident_report;
-            $automobile->liability_letter=$request->liability_letter;
-            $automobile->insurance_declaration=$request->insurance_declaration;
+            $automobile->name = $request->name;
+            $automobile->department_id = $request->department_id;
+            $automobile->deductible_charge_TAT = $request->deductible_charge_TAT;
+            $automobile->concerned_internal_department = $request->concerned_internal_department;
+            $automobile->cause_damage = $request->cause_damage;
+            $automobile->Liability_letter_number = $request->Liability_letter_number;
+            $automobile->amount = $request->amount;
+            $automobile->currency = $request->currency;
+            $automobile->comment_third_party = $request->comment_third_party;
+            $automobile->reinvoiced = $request->reinvoiced;
+            $automobile->currency_Insurance = $request->currency_Insurance;
+            $automobile->Invoice_number = $request->Invoice_number;
+            $automobile->date_of_reimbursement = $request->date_of_reimbursement;
+            $automobile->reimbursed_amount = $request->reimbursed_amount;
+            $automobile->date_of_declaration = $request->date_of_declaration;
+            $automobile->date_of_feedback = $request->date_of_feedback;
+            $automobile->comment_Insurance = $request->comment_Insurance;
+            $automobile->Indemnification_of_insurer = $request->Indemnification_of_insurer;
+            $automobile->Indemnification_date = $request->Indemnification_date;
+            $automobile->currency_indemnisation = $request->currency_indemnisation;
+            $automobile->deductible_charge_TAT = $request->deductible_charge_TAT;
+            $automobile->damage_caused_by = $request->damage_caused_by;
+            $automobile->comment_nature_of_damage = $request->comment_nature_of_damage;
+            $automobile->TAT_name_persons = $request->TAT_name_persons;
+            $automobile->outsourcer_company_name = $request->outsourcer_company_name;
+            $automobile->outsourcer_persons = $request->outsourcer_persons;
+            $automobile->thirdparty_company_name = $request->thirdparty_company_name;
+            $automobile->thirdparty_persons = $request->thirdparty_persons;
+            $automobile->thirdparty_Activity_comments = $request->thirdparty_Activity_comments;
+            $automobile->incident_report = $request->incident_report;
+            $automobile->liability_letter = $request->liability_letter;
+            $automobile->insurance_declaration = $request->insurance_declaration;
 
-            if($request->nature_of_damage["id"]==0){
-                if($request->nature_of_damage["name"]!=null || $request->nature_of_damage["name"]!=""){
-                    $nature_of_damage_returnedValue=$this->nature_of_damage_confirmAndSave($request->nature_of_damage);
-                        if($nature_of_damage_returnedValue["IsReturnErrorRespone"]){
-                            return [
-                                "payload" => $nature_of_damage_returnedValue["payload"],
-                                "status" => $nature_of_damage_returnedValue["status"]
-                            ];
-                        }
-                        $automobile->nature_of_damage_id=$nature_of_damage_returnedValue["payload"]->id;
+            if ($request->nature_of_damage["id"] == 0) {
+                if ($request->nature_of_damage["name"] != null || $request->nature_of_damage["name"] != "") {
+                    $nature_of_damage_returnedValue = $this->nature_of_damage_confirmAndSave($request->nature_of_damage);
+                    if ($nature_of_damage_returnedValue["IsReturnErrorRespone"]) {
+                        return [
+                            "payload" => $nature_of_damage_returnedValue["payload"],
+                            "status" => $nature_of_damage_returnedValue["status"]
+                        ];
+                    }
+                    $automobile->nature_of_damage_id = $nature_of_damage_returnedValue["payload"]->id;
                 }
-
             } else {
-                $nature_of_damage_returnedValue=$this->nature_of_damage_confirmAndUpdate($request->nature_of_damage);
-                $automobile->nature_of_damage_id=$request->nature_of_damage["id"];
+                $nature_of_damage_returnedValue = $this->nature_of_damage_confirmAndUpdate($request->nature_of_damage);
+                $automobile->nature_of_damage_id = $request->nature_of_damage["id"];
 
-                if($nature_of_damage_returnedValue["IsReturnErrorRespone"]){
+                if ($nature_of_damage_returnedValue["IsReturnErrorRespone"]) {
                     return [
                         "payload" => $nature_of_damage_returnedValue["payload"],
                         "status" => $nature_of_damage_returnedValue["status"]
@@ -256,23 +256,22 @@ class AutomobileController extends Controller
                 }
             }
 
-            if($request->brand["id"]==0){
-                if($request->brand["name"]!=null || $request->brand["name"]!=""){
-                    $brand_returnedValue=$this->brand_confirmAndSave($request->brand);
+            if ($request->brand["id"] == 0) {
+                if ($request->brand["name"] != null || $request->brand["name"] != "") {
+                    $brand_returnedValue = $this->brand_confirmAndSave($request->brand);
 
-                if($brand_returnedValue["IsReturnErrorRespone"]){
-                    return [
-                        "payload" => $brand_returnedValue["payload"],
-                        "status" => $brand_returnedValue["status"]
-                    ];
+                    if ($brand_returnedValue["IsReturnErrorRespone"]) {
+                        return [
+                            "payload" => $brand_returnedValue["payload"],
+                            "status" => $brand_returnedValue["status"]
+                        ];
+                    }
+                    $automobile->brand_id = $brand_returnedValue["payload"]->id;
                 }
-                $automobile->brand_id=$brand_returnedValue["payload"]->id;
-                }
-            }
-            else{
-                $band_returnedValue=$this->brand_confirmAndUpdate($request->brand);
-                $automobile->brand_id=$request->brand["id"];
-                if($band_returnedValue["IsReturnErrorRespone"]){
+            } else {
+                $band_returnedValue = $this->brand_confirmAndUpdate($request->brand);
+                $automobile->brand_id = $request->brand["id"];
+                if ($band_returnedValue["IsReturnErrorRespone"]) {
                     return [
                         "payload" => $band_returnedValue["payload"],
                         "status" => $band_returnedValue["status"]
@@ -280,46 +279,44 @@ class AutomobileController extends Controller
                 }
             }
 
-            if($request->companie["id"]==0){
-                if($request->companie["name"]!=null || $request->companie["name"]!=""){
-                    $companie_returnedValue=$this->companie_confirmAndSave($request->companie);
+            if ($request->companie["id"] == 0) {
+                if ($request->companie["name"] != null || $request->companie["name"] != "") {
+                    $companie_returnedValue = $this->companie_confirmAndSave($request->companie);
 
-                if($companie_returnedValue["IsReturnErrorRespone"]){
+                    if ($companie_returnedValue["IsReturnErrorRespone"]) {
+                        return [
+                            "payload" => $companie_returnedValue["payload"],
+                            "status" => $companie_returnedValue["status"]
+                        ];
+                    }
+                    $automobile->companie_id = $companie_returnedValue["payload"]->id;
+                }
+            } else {
+                $companie_returnedValue = $this->companie_confirmAndUpdate($request->companie);
+                $automobile->companie_id = $request->companie["id"];
+                if ($companie_returnedValue["IsReturnErrorRespone"]) {
                     return [
                         "payload" => $companie_returnedValue["payload"],
                         "status" => $companie_returnedValue["status"]
                     ];
                 }
-                $automobile->companie_id=$companie_returnedValue["payload"]->id;
-                }
-            }
-            else{
-                $companie_returnedValue=$this->companie_confirmAndUpdate($request->companie);
-                $automobile->companie_id=$request->companie["id"];
-                if($companie_returnedValue["IsReturnErrorRespone"]){
-                    return [
-                        "payload" => $companie_returnedValue["payload"],
-                        "status" => $companie_returnedValue["status"]
-                    ];
-                }
             }
 
-            if($request->type_of_equipment["id"]==0){
-                if($request->type_of_equipment["name"]!=null || $request->type_of_equipment["name"]!=""){
-                    $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndSave($request->type_of_equipment);
-                    if($type_of_equipment_returnedValue["IsReturnErrorRespone"]){
+            if ($request->type_of_equipment["id"] == 0) {
+                if ($request->type_of_equipment["name"] != null || $request->type_of_equipment["name"] != "") {
+                    $type_of_equipment_returnedValue = $this->type_of_equipment_confirmAndSave($request->type_of_equipment);
+                    if ($type_of_equipment_returnedValue["IsReturnErrorRespone"]) {
                         return [
                             "payload" => $type_of_equipment_returnedValue["payload"],
                             "status" => $type_of_equipment_returnedValue["status"]
                         ];
                     }
-                    $automobile->type_of_equipment_id=$type_of_equipment_returnedValue["payload"]->id;
+                    $automobile->type_of_equipment_id = $type_of_equipment_returnedValue["payload"]->id;
                 }
-            }
-            else{
-                $type_of_equipment_returnedValue=$this->type_of_equipment_confirmAndUpdate($request->type_of_equipment);
-                $automobile->type_of_equipment_id=$request->type_of_equipment["id"];
-                if($type_of_equipment_returnedValue["IsReturnErrorRespone"]){
+            } else {
+                $type_of_equipment_returnedValue = $this->type_of_equipment_confirmAndUpdate($request->type_of_equipment);
+                $automobile->type_of_equipment_id = $request->type_of_equipment["id"];
+                if ($type_of_equipment_returnedValue["IsReturnErrorRespone"]) {
                     return [
                         "payload" => $type_of_equipment_returnedValue["payload"],
                         "status" => $type_of_equipment_returnedValue["status"]
@@ -327,32 +324,47 @@ class AutomobileController extends Controller
                 }
             }
 
-            if($request->file()) {
-                if($request->incident_reportFile!=null && $request->incident_reportFile!=""){
-                    $file=$request->incident_reportFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_automobiles_incident_report");
-                    $automobile->incident_report=$filename;
+            $automobile->save();
+            if ($request->file()) {
+                if (!empty($request["liability_letter_files"]) && $request["liability_letter_files"] != null) {
+
+                    for ($i = 0; $i < count($request["liability_letter_files"]); $i++) {
+                        $file = $request["liability_letter_files"][$i];
+                        $filename = time() . "_" . $file->getClientOriginalName();
+                        $this->uploadOne($file, config('cdn.automobiles.path'), $filename, "public_uploads_automobiles_liability_letter");
+                        $LiabilityInsuranceFile = new LiabilityInsuranceFiles();
+                        $LiabilityInsuranceFile->filename = $filename;
+                        $LiabilityInsuranceFile->type = "liability";
+                        $LiabilityInsuranceFile->automobile_id = $automobile->id;
+                        $LiabilityInsuranceFile->save();
+                    }
                 }
-                if($request->liability_letterFile!=null && $request->liability_letterFile!=""){
-                    $file=$request->liability_letterFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_automobiles_liability_letter");
-                    $automobile->liability_letter=$filename;
-                }
-                if($request->insurance_declarationFile!=null && $request->insurance_declarationFile!=""){
-                    $file=$request->insurance_declarationFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.automobiles.path'),$filename,"public_uploads_automobiles_insurance_declaration");
-                    $automobile->insurance_declaration=$filename;
+                if (!empty($request["insurance_declaration_files"]) && $request["insurance_declaration_files"] != null) {
+
+                    for ($i = 0; $i < count($request["insurance_declaration_files"]); $i++) {
+                        $file = $request["insurance_declaration_files"][$i];
+                        $filename = time() . "_" . $file->getClientOriginalName();
+                        $this->uploadOne($file, config('cdn.automobiles.path'), $filename, "public_uploads_automobiles_insurance_declaration");
+                        $LiabilityInsuranceFile = new LiabilityInsuranceFiles();
+                        $LiabilityInsuranceFile->filename = $filename;
+                        $LiabilityInsuranceFile->type = "insurance";
+                        $LiabilityInsuranceFile->automobile_id = $automobile->id;
+                        $LiabilityInsuranceFile->save();
+                    }
                 }
             }
-
-            $automobile->save();
+            // delete files
+            if (!empty($request["filesDelete"]) && $request["filesDelete"] != null) {
+                for ($i = 0; $i < count($request["filesDelete"]); $i++) {
+                    $LiabilityInsuranceFile = LiabilityInsuranceFiles::find($request["filesDelete"][$i]["id"]);
+                    $this->deleteOne(config('cdn.automobiles.path'), $LiabilityInsuranceFile->filename);
+                    $LiabilityInsuranceFile->delete();
+                }
+            }
             $automobile->claim_id = $automobile->claim->id;
             $automobile->type_of_equipment = $automobile->typeOfEquipment;
             $automobile->brand = $automobile->brand;
-            $automobile->companie= $automobile->companie;
+            $automobile->companie = $automobile->companie;
             $automobile->nature_of_damage = $automobile->natureOfDamage;
 
             return [
@@ -361,34 +373,33 @@ class AutomobileController extends Controller
             ];
         }
     }
-    public function index($claim_id){
-        $automobile=Automobile::select()->where('claim_id', $claim_id)
-        ->with("typeOfEquipment")
-        ->with("brand")
-        ->with("companie")
-        ->with("natureOfDamage")
-        ->with("department")
-        ->with("estimate")
-        ->with("estimate.otherValuation")
-        ->get();
+    public function index($claim_id)
+    {
+        $automobile = Automobile::select()->where('claim_id', $claim_id)
+            ->with("typeOfEquipment")
+            ->with("brand")
+            ->with("companie")
+            ->with("natureOfDamage")
+            ->with("department")
+            ->with("estimate")
+            ->with("estimate.otherValuation")
+            ->get();
 
-        for ($j=0; $j < count($automobile)  ; $j++) {
+        for ($j = 0; $j < count($automobile); $j++) {
             $calculated = false;
             $totalAmount = 0;
             $currency = "";
             $AmountCustomedField = 0;
-            for ($i = count($automobile[$j]->estimate)-1; $i >= 0; $i--) {
-               // dd($automobile[$j]->estimate[$i]->otherValuation);
-                if($automobile[$j]->estimate[$i]->temporary_or_permanent=="Permanent" && !$calculated){
+            for ($i = count($automobile[$j]->estimate) - 1; $i >= 0; $i--) {
+                // dd($automobile[$j]->estimate[$i]->otherValuation);
+                if ($automobile[$j]->estimate[$i]->temporary_or_permanent == "Permanent" && !$calculated) {
                     for ($d = 0; $d < count($automobile[$j]->estimate[$i]->otherValuation); $d++) {
                         $AmountCustomedField += $automobile[$j]->estimate[$i]->otherValuation[$d]->value_valuation;
-
                     }
-                    $totalAmount += $AmountCustomedField ;
+                    $totalAmount += $AmountCustomedField;
                     $calculated = true;
                     $currency = $automobile[$j]->estimate[$i]->currency_estimate;
                 }
-
             }
 
             $automobile[$j]->estimationAmount = $totalAmount . " (" . $currency . ")";
@@ -399,15 +410,15 @@ class AutomobileController extends Controller
             "status" => "200_1"
         ];
     }
-    public function delete(Request $request){
-        $automobile=Automobile::find($request->id);
-        if(!$automobile){
+    public function delete(Request $request)
+    {
+        $automobile = Automobile::find($request->id);
+        if (!$automobile) {
             return [
                 "payload" => "The searched row does not exist !",
                 "status" => "404_4"
             ];
-        }
-        else {
+        } else {
             $automobile->delete();
             return [
                 "payload" => "Deleted successfully",
@@ -415,9 +426,10 @@ class AutomobileController extends Controller
             ];
         }
     }
-    public function nature_of_damage_confirmAndSave($NatureOfDamage){
+    public function nature_of_damage_confirmAndSave($NatureOfDamage)
+    {
         $validator = Validator::make($NatureOfDamage, [
-           // "name" => "required:nature_of_damages,name",
+            // "name" => "required:nature_of_damages,name",
         ]);
         if ($validator->fails()) {
             return [
@@ -426,8 +438,8 @@ class AutomobileController extends Controller
                 "IsReturnErrorRespone" => true
             ];
         }
-        $natureOfDamage=NatureOfDamage::make($NatureOfDamage);
-        $natureOfDamage->categorie="automobile";
+        $natureOfDamage = NatureOfDamage::make($NatureOfDamage);
+        $natureOfDamage->categorie = "automobile";
 
         $natureOfDamage->save();
         return [
@@ -437,27 +449,28 @@ class AutomobileController extends Controller
 
         ];
     }
-    public function nature_of_damage_confirmAndUpdate($NatureOfDamage){
-        $natureOfDamage=NatureOfDamage::find($NatureOfDamage['id']);
-            if(!$natureOfDamage){
-                return [
-                    "payload"=>"nature of Damage is not exist !",
-                    "status"=>"404_2",
-                    "IsReturnErrorRespone" => true
-                ];
-            }
-            else if ($natureOfDamage){
-                //$natureOfDamage->name=$NatureOfDamage['name'];
-                $natureOfDamage->save();
-                return [
-                    "payload"=>$natureOfDamage,
-                    "status"=>"200",
-                    "IsReturnErrorRespone" => false
-                ];
-            }
+    public function nature_of_damage_confirmAndUpdate($NatureOfDamage)
+    {
+        $natureOfDamage = NatureOfDamage::find($NatureOfDamage['id']);
+        if (!$natureOfDamage) {
+            return [
+                "payload" => "nature of Damage is not exist !",
+                "status" => "404_2",
+                "IsReturnErrorRespone" => true
+            ];
+        } else if ($natureOfDamage) {
+            //$natureOfDamage->name=$NatureOfDamage['name'];
+            $natureOfDamage->save();
+            return [
+                "payload" => $natureOfDamage,
+                "status" => "200",
+                "IsReturnErrorRespone" => false
+            ];
+        }
     }
 
-    public function companie_confirmAndSave($Companie){
+    public function companie_confirmAndSave($Companie)
+    {
         $validator = Validator::make($Companie, [
             //"name" => "required:brands,name",
         ]);
@@ -469,8 +482,8 @@ class AutomobileController extends Controller
             ];
         }
 
-        $companie=Company::make($Companie);
-        $companie->categorie="automobile";
+        $companie = Company::make($Companie);
+        $companie->categorie = "automobile";
 
         $companie->save();
 
@@ -480,25 +493,26 @@ class AutomobileController extends Controller
             "IsReturnErrorRespone" => false
         ];
     }
-    public function companie_confirmAndUpdate($Companie){
-        $companie=Company::find($Companie['id']);
-            if(!$companie){
-                return [
-                    "payload"=>"companie is not exist !",
-                    "status"=>"404_2",
-                    "IsReturnErrorRespone" => true
-                ];
-            }
-            else if ($Companie){
-                $companie->save();
-                return [
-                    "payload"=>$companie,
-                    "status"=>"200",
-                    "IsReturnErrorRespone" => false
-                ];
-            }
+    public function companie_confirmAndUpdate($Companie)
+    {
+        $companie = Company::find($Companie['id']);
+        if (!$companie) {
+            return [
+                "payload" => "companie is not exist !",
+                "status" => "404_2",
+                "IsReturnErrorRespone" => true
+            ];
+        } else if ($Companie) {
+            $companie->save();
+            return [
+                "payload" => $companie,
+                "status" => "200",
+                "IsReturnErrorRespone" => false
+            ];
+        }
     }
-    public function brand_confirmAndSave($Brand){
+    public function brand_confirmAndSave($Brand)
+    {
         $validator = Validator::make($Brand, [
             //"name" => "required:brands,name",
         ]);
@@ -510,8 +524,8 @@ class AutomobileController extends Controller
             ];
         }
 
-        $brand=Brand::make($Brand);
-        $brand->categorie="automobile";
+        $brand = Brand::make($Brand);
+        $brand->categorie = "automobile";
 
         $brand->save();
 
@@ -521,27 +535,28 @@ class AutomobileController extends Controller
             "IsReturnErrorRespone" => false
         ];
     }
-    public function brand_confirmAndUpdate($Brand){
-        $brand=Brand::find($Brand['id']);
-            if(!$brand){
-                return [
-                    "payload"=>"brand is not exist !",
-                    "status"=>"404_2",
-                    "IsReturnErrorRespone" => true
-                ];
-            }
-            else if ($brand){
-              //  $brand->name=$Brand['name'];
-                $brand->save();
-                return [
-                    "payload"=>$brand,
-                    "status"=>"200",
-                    "IsReturnErrorRespone" => false
-                ];
-            }
+    public function brand_confirmAndUpdate($Brand)
+    {
+        $brand = Brand::find($Brand['id']);
+        if (!$brand) {
+            return [
+                "payload" => "brand is not exist !",
+                "status" => "404_2",
+                "IsReturnErrorRespone" => true
+            ];
+        } else if ($brand) {
+            //  $brand->name=$Brand['name'];
+            $brand->save();
+            return [
+                "payload" => $brand,
+                "status" => "200",
+                "IsReturnErrorRespone" => false
+            ];
+        }
     }
 
-    public function type_of_equipment_confirmAndSave($Type_of_equipment){
+    public function type_of_equipment_confirmAndSave($Type_of_equipment)
+    {
         $validator = Validator::make($Type_of_equipment, [
             //"name" => "required:type_of_equipments,name",
         ]);
@@ -553,8 +568,8 @@ class AutomobileController extends Controller
             ];
         }
 
-        $type_of_equipemnt=TypeOfEquipment::make($Type_of_equipment);
-        $type_of_equipemnt->categorie="automobile";
+        $type_of_equipemnt = TypeOfEquipment::make($Type_of_equipment);
+        $type_of_equipemnt->categorie = "automobile";
 
         $type_of_equipemnt->save();
 
@@ -564,23 +579,23 @@ class AutomobileController extends Controller
             "IsReturnErrorRespone" => false
         ];
     }
-    public function type_of_equipment_confirmAndUpdate($Type_of_equipment){
-        $type_of_equipment=TypeOfEquipment::find($Type_of_equipment['id']);
-            if(!$type_of_equipment){
-                return [
-                    "payload"=>"type_of_equipment is not exist !",
-                    "status"=>"404_2",
-                    "IsReturnErrorRespone" => true
-                ];
-            }
-            else if ($type_of_equipment){
-               // $type_of_equipment->name=$Type_of_equipment['name'];
-                $type_of_equipment->save();
-                return [
-                    "payload"=>$type_of_equipment,
-                    "status"=>"200",
-                    "IsReturnErrorRespone" => false
-                ];
-            }
+    public function type_of_equipment_confirmAndUpdate($Type_of_equipment)
+    {
+        $type_of_equipment = TypeOfEquipment::find($Type_of_equipment['id']);
+        if (!$type_of_equipment) {
+            return [
+                "payload" => "type_of_equipment is not exist !",
+                "status" => "404_2",
+                "IsReturnErrorRespone" => true
+            ];
+        } else if ($type_of_equipment) {
+            // $type_of_equipment->name=$Type_of_equipment['name'];
+            $type_of_equipment->save();
+            return [
+                "payload" => $type_of_equipment,
+                "status" => "200",
+                "IsReturnErrorRespone" => false
+            ];
+        }
     }
 }

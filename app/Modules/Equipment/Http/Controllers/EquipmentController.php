@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Expr\Array_;
 use stdClass;
+use App\Modules\LiabilityInsuranceFiles\Models\LiabilityInsuranceFiles;
 
 class EquipmentController extends Controller
 {
@@ -168,27 +169,47 @@ class EquipmentController extends Controller
                     ];
                 }
             }
+            $equipment->save();
+
+
+
+
             if($request->file()) {
-                if($request->incident_reportFile!=null){
-                    $file=$request->incident_reportFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_incident_report");
-                    $equipment->incident_report=$filename;
+                if (!empty($request["liability_letter_files"]) && $request["liability_letter_files"] != null ) {
+
+                    for ($i=0;$i<count($request["liability_letter_files"]);$i++){
+                        $file=$request["liability_letter_files"][$i];
+                        $filename=time()."_".$file->getClientOriginalName();
+                        $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_liability_letter");
+                        $LiabilityInsuranceFile=new LiabilityInsuranceFiles();
+                        $LiabilityInsuranceFile->filename=$filename;
+                        $LiabilityInsuranceFile->type="liability";
+                        $LiabilityInsuranceFile->equipment_id=$equipment->id;
+                        $LiabilityInsuranceFile->save();
+                    }
                 }
-                if($request->liability_letterFile!=null){
-                    $file=$request->liability_letterFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_liability_letter");
-                    $equipment->liability_letter=$filename;
-                }
-                if($request->insurance_declarationFile!=null){
-                    $file=$request->insurance_declarationFile;
-                    $filename=time()."_".$file->getClientOriginalName();
-                    $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_insurance_declaration");
-                    $equipment->insurance_declaration=$filename;
+                if (!empty($request["insurance_declaration_files"]) && $request["insurance_declaration_files"] != null ) {
+
+                    for ($i=0;$i<count($request["insurance_declaration_files"]);$i++){
+                        $file=$request["insurance_declaration_files"][$i];
+                        $filename=time()."_".$file->getClientOriginalName();
+                        $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_insurance_declaration");
+                        $LiabilityInsuranceFile=new LiabilityInsuranceFiles();
+                        $LiabilityInsuranceFile->filename=$filename;
+                        $LiabilityInsuranceFile->type="insurance";
+                        $LiabilityInsuranceFile->equipment_id=$equipment->id;
+                        $LiabilityInsuranceFile->save();
+                    }
                 }
             }
-            $equipment->save();
+            // delete files
+            if (!empty($request["LiabilityInsuranceFilesDelete"]) && $request["filesDelete"] != null ) {
+                for ($i=0;$i<count($request["filesDelete"]);$i++){
+                    $LiabilityInsuranceFile=LiabilityInsuranceFiles::find($request["filesDelete"][$i]["id"]);
+                    $this->deleteOne(config('cdn.equipments.path'),$LiabilityInsuranceFile->filename);
+                    $LiabilityInsuranceFile->delete();
+                }
+            }
             $equipment->claim_id = $equipment->claim->id;
             $equipment->type_of_equipment= $equipment->typeOfEquipment;
             $equipment->brand= $equipment->brand;
@@ -377,24 +398,44 @@ class EquipmentController extends Controller
                         ];
                     }
                 }
-                if($request->file()) {
+                $equipment->save();
 
-                    if($request->liability_letterFile!=null && $request->liability_letterFile!=""){
-                        $file=$request->liability_letterFile;
+            if($request->file()) {
+                    if (!empty($request["liability_letter_files"]) && $request["liability_letter_files"] != null ) {
+
+                    for ($i=0;$i<count($request["liability_letter_files"]);$i++){
+                        $file=$request["liability_letter_files"][$i];
                         $filename=time()."_".$file->getClientOriginalName();
                         $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_liability_letter");
-                        $equipment->liability_letter=$filename;
-
-                    }
-                    if($request->insurance_declarationFile!=null && $request->insurance_declarationFile!=""){
-                        $file=$request->insurance_declarationFile;
-                        $filename=time()."_".$file->getClientOriginalName();
-                        $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_insurance_declaration");
-                        $equipment->insurance_declaration=$filename;
-
+                        $LiabilityInsuranceFile=new LiabilityInsuranceFiles();
+                        $LiabilityInsuranceFile->filename=$filename;
+                        $LiabilityInsuranceFile->type="liability";
+                        $LiabilityInsuranceFile->equipment_id=$equipment->id;
+                        $LiabilityInsuranceFile->save();
                     }
                 }
-                $equipment->save();
+                if (!empty($request["insurance_declaration_files"]) && $request["insurance_declaration_files"] != null ) {
+
+                    for ($i=0;$i<count($request["insurance_declaration_files"]);$i++){
+                        $file=$request["insurance_declaration_files"][$i];
+                        $filename=time()."_".$file->getClientOriginalName();
+                        $this->uploadOne($file, config('cdn.equipments.path'),$filename,"public_uploads_equipments_insurance_declaration");
+                        $LiabilityInsuranceFile=new LiabilityInsuranceFiles();
+                        $LiabilityInsuranceFile->filename=$filename;
+                        $LiabilityInsuranceFile->type="insurance";
+                        $LiabilityInsuranceFile->equipment_id=$equipment->id;
+                        $LiabilityInsuranceFile->save();
+                    }
+                }
+
+            }
+            if (!empty($request["filesDelete"]) && $request["filesDelete"] != null ) {
+                for ($i=0;$i<count($request["filesDelete"]);$i++){
+                    $LiabilityInsuranceFile=LiabilityInsuranceFiles::find($request["filesDelete"][$i]["id"]);
+                    $this->deleteOne(config('cdn.equipments.path'),$LiabilityInsuranceFile->filename);
+                    $LiabilityInsuranceFile->delete();
+                }
+            }
                 $equipment->claim_id = $equipment->claim->id;
                 $equipment->type_of_equipment= $equipment->typeOfEquipment;
                 $equipment->brand= $equipment->brand;
@@ -416,6 +457,7 @@ class EquipmentController extends Controller
         ->with("natureOfDamage")
         ->with("department")
         ->with("matricule")
+        ->with("liabilityInsuranceFiles")
         ->with("estimate")
         ->with("estimate.otherValuation")
         ->get();
