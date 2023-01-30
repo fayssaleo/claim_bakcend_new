@@ -182,6 +182,10 @@ class ContainerController extends Controller
             $container->containerType = $request->containerType;
             $container->containerID = $request->containerID;
 
+            $container->marchandise = $request->marchandise;
+            $container->marchandise_nature = $request->marchandise_nature;
+            $container->marchandise_type = $request->marchandise_type;
+
             $container->deductible_charge_TAT = $request->deductible_charge_TAT;
             $container->categorie_of_container = $request->categorie_of_container;
             $container->status = $request->status;

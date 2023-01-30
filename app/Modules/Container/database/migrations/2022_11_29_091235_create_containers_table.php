@@ -47,6 +47,11 @@ return new class extends Migration
             //
 
             $table->string("cause_damage")->nullable();
+            
+            $table->string("marchandise")->nullable();
+            $table->string("marchandise_nature")->nullable();
+            $table->string("marchandise_type")->nullable();
+
             $table->string("Liability_letter_number")->nullable();
             $table->double('amount', 20, 4)->nullable();
             $table->string("currency")->nullable();
