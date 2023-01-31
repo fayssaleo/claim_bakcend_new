@@ -37,6 +37,9 @@ return new class extends Migration
             $table->bigInteger('department_id')->unsigned()->nullable();
             $table->foreign('department_id')->references('id')->on('departments');
 
+            $table->bigInteger('matricule_id')->unsigned()->nullable();
+            $table->foreign('matricule_id')->references('id')->on('equipment_matricules');
+
             $table->string("concerned_internal_department")->nullable();
             $table->string("cause_damage");
             $table->string("Liability_letter_number")->nullable();

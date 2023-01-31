@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('equipment_matricules', function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->string("id_equipment")->nullable();
+            $table->string("id_automobile")->nullable();
             $table->string("matricule")->nullable();
             $table->string("equipment")->nullable();
             $table->string("brand")->nullable();

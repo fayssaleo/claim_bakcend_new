@@ -13,6 +13,7 @@ use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\TypeOfEquipment\Models\TypeOfEquipment;
 use App\Modules\Company\Models\Company;
 use App\Modules\LiabilityInsuranceFiles\Models\LiabilityInsuranceFiles;
+use App\Modules\EquipmentMatricule\Models\EquipmentMatricule;
 
 class AutomobileController extends Controller
 {
@@ -135,7 +136,29 @@ class AutomobileController extends Controller
                     ];
                 }
             }
+            if($request->matricule["id"]==0){
+                if($request->matricule["matricule"]!=null || $request->matricule["matricule"]!=""){
+                    $equipmentMatricule_returnedValue=$this->equipmentMatricule_confirmAndSave($request->matricule);
 
+                if($equipmentMatricule_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $equipmentMatricule_returnedValue["payload"],
+                        "status" => $equipmentMatricule_returnedValue["status"]
+                    ];
+                }
+                $automobile->matricule_id=$equipmentMatricule_returnedValue["payload"]->id;
+                }
+            }
+            else{
+                $equipmentMatricule_returnedValue=$this->equipmentMatricule_confirmAndUpdate($request->matricule);
+                $automobile->matricule_id=$request->matricule["id"];
+                if($equipmentMatricule_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $equipmentMatricule_returnedValue["payload"],
+                        "status" => $equipmentMatricule_returnedValue["status"]
+                    ];
+                }
+            }
             $automobile->save();
             if ($request->file()) {
                 if (!empty($request["liability_letter_files"]) && $request["liability_letter_files"] != null) {
@@ -323,7 +346,29 @@ class AutomobileController extends Controller
                     ];
                 }
             }
+            if($request->matricule["id"]==0){
+                if($request->matricule["matricule"]!=null || $request->matricule["matricule"]!=""){
+                    $equipmentMatricule_returnedValue=$this->equipmentMatricule_confirmAndSave($request->matricule);
 
+                if($equipmentMatricule_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $equipmentMatricule_returnedValue["payload"],
+                        "status" => $equipmentMatricule_returnedValue["status"]
+                    ];
+                }
+                $automobile->matricule_id=$equipmentMatricule_returnedValue["payload"]->id;
+                }
+            }
+            else{
+                $equipmentMatricule_returnedValue=$this->equipmentMatricule_confirmAndUpdate($request->matricule);
+                $automobile->matricule_id=$request->matricule["id"];
+                if($equipmentMatricule_returnedValue["IsReturnErrorRespone"]){
+                    return [
+                        "payload" => $equipmentMatricule_returnedValue["payload"],
+                        "status" => $equipmentMatricule_returnedValue["status"]
+                    ];
+                }
+            }
             $automobile->save();
             if ($request->file()) {
                 if (!empty($request["liability_letter_files"]) && $request["liability_letter_files"] != null) {
@@ -366,6 +411,7 @@ class AutomobileController extends Controller
             $automobile->brand = $automobile->brand;
             $automobile->companie = $automobile->companie;
             $automobile->nature_of_damage = $automobile->natureOfDamage;
+            $automobile->matricule= $automobile->matricule;
 
             return [
                 "payload" => $automobile,
@@ -597,5 +643,46 @@ class AutomobileController extends Controller
                 "IsReturnErrorRespone" => false
             ];
         }
+    }
+
+    public function equipmentMatricule_confirmAndSave($EquipmentMatricule){
+        $validator = Validator::make($EquipmentMatricule, [
+            //"name" => "required:brands,name",
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                "payload" => $validator->errors(),
+                "status" => "406_2"
+            ];
+        }
+
+        $equipmentMatricule=EquipmentMatricule::make($EquipmentMatricule);
+
+        $equipmentMatricule->save();
+
+        return [
+            "payload" => $equipmentMatricule,
+            "status" => "200",
+            "IsReturnErrorRespone" => false
+        ];
+    }
+    public function equipmentMatricule_confirmAndUpdate($EquipmentMatricule){
+        $equipmentMatricule=EquipmentMatricule::find($EquipmentMatricule['id']);
+            if(!$equipmentMatricule){
+                return [
+                    "payload"=>"equipmentMatricule is not exist !",
+                    "status"=>"404_2",
+                    "IsReturnErrorRespone" => true
+                ];
+            }
+            else if ($equipmentMatricule){
+                $equipmentMatricule->save();
+                return [
+                    "payload"=>$equipmentMatricule,
+                    "status"=>"200",
+                    "IsReturnErrorRespone" => false
+                ];
+            }
     }
 }
