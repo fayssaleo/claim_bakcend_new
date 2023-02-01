@@ -194,6 +194,7 @@ class AutomobileController extends Controller
             $automobile->companie = $automobile->companie;
 
             $automobile->nature_of_damage = $automobile->natureOfDamage;
+            $automobile->matricule= $automobile->matricule;
             return [
                 "payload" => $automobile,
                 "status" => "200"
@@ -427,6 +428,7 @@ class AutomobileController extends Controller
             ->with("companie")
             ->with("natureOfDamage")
             ->with("department")
+            ->with("matricule")
             ->with("estimate")
             ->with("estimate.otherValuation")
             ->get();

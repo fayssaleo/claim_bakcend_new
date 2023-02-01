@@ -12,6 +12,7 @@ use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\Claim\Models\Claim;
 use App\Modules\Estimate\Models\Estimate;
 use App\Modules\Company\Models\Company;
+use App\Modules\EquipmentMatricule\Models\EquipmentMatricule;
 use App\Modules\LiabilityInsuranceFiles\Models\LiabilityInsuranceFiles;
 
 class Automobile extends Model
@@ -19,6 +20,12 @@ class Automobile extends Model
     use HasFactory;
     protected $guarded= ["id"];
     protected $table = 'automobiles';
+
+    public function matricule()
+    {
+        return $this->belongsTo(EquipmentMatricule::class);
+    }
+
     public function typeOfEquipment()
     {
         return $this->belongsTo(TypeOfEquipment::class);

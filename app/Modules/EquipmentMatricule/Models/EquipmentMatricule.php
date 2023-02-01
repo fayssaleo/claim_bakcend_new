@@ -2,6 +2,7 @@
 
 namespace App\Modules\EquipmentMatricule\Models;
 
+use App\Modules\Automobile\Models\Automobile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,5 +16,10 @@ class EquipmentMatricule extends Model
     public function equipment()
     {
         return $this->hasMany(Equipment::class);
+    }
+
+    public function automobile()
+    {
+        return $this->hasMany(Automobile::class);
     }
 }
