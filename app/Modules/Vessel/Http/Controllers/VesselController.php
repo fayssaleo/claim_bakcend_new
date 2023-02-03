@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Expr\Array_;
 use App\Modules\Company\Models\Company;
 use App\Modules\LiabilityInsuranceFiles\Models\LiabilityInsuranceFiles;
+use PhpParser\Error;
 
 class VesselController extends Controller
 {
@@ -25,14 +26,26 @@ class VesselController extends Controller
         if ($request->id == 0) {
 
             $validator = Validator::make($request->all(), [
-                //  "name" => "required:brand,name",
+                "shipping_line_id" => "required:container,shipping_line_id",
+                "nature_of_damage_id" => "required:container,nature_of_damage_id",
+                "cause_damage" => "required:container,cause_damage",
+                "damage_caused_by" => "required:container,damage_caused_by",
+            ],
+            [
+                'shipping_line_id.required' => 'You have to choose type of the shipping line !',
+                'nature_of_damage_id.required' => 'You have to choose type of the nature of damage !',
+                'cause_damage.required' => 'You have to choose type of the cause damage !',
+                'damage_caused_by.required' => 'You have to choose type of the damage caused by !',
             ]);
             if ($validator->fails()) {
-                return [
+                throw new  Error($validator->errors()->__toString()) ;
+
+                /* return [
                     "payload" => $validator->errors(),
                     "status" => "406_2"
-                ];
+                ]; */
             }
+
             $claim = null;
             if ($request->claim_id == 0) {
                 $claim = new Claim();

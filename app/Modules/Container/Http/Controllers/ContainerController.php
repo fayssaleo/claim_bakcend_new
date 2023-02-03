@@ -12,6 +12,7 @@ use App\Modules\NatureOfDamage\Models\NatureOfDamage;
 use App\Modules\ShippingLine\Models\ShippingLine;
 use App\Modules\Company\Models\Company;
 use App\Modules\LiabilityInsuranceFiles\Models\LiabilityInsuranceFiles;
+use PhpParser\Error;
 
 class ContainerController extends Controller
 {
@@ -22,12 +23,27 @@ class ContainerController extends Controller
 
         if ($request->id == 0) {
 
-            $validator = Validator::make($request->all(), []);
+            $validator = Validator::make($request->all(), [
+                "shipping_line_id" => "required:container,shipping_line_id",
+                "categorie_of_container" => "required:container,categorie_of_container",
+                "nature_of_damage_id" => "required:container,nature_of_damage_id",
+                "cause_damage" => "required:container,cause_damage",
+                "damage_caused_by" => "required:container,damage_caused_by",
+            ],
+            [
+                'shipping_line_id.required' => 'You have to choose type of the shipping line !',
+                'categorie_of_container.required' => 'You have to choose type of the categorie of container !',
+                'nature_of_damage_id.required' => 'You have to choose type of the nature of damage !',
+                'cause_damage.required' => 'You have to choose type of the cause damage !',
+                'damage_caused_by.required' => 'You have to choose type of the damage caused by !',
+            ]);
             if ($validator->fails()) {
-                return [
+                throw new  Error($validator->errors()->__toString()) ;
+
+                /* return [
                     "payload" => $validator->errors(),
                     "status" => "406_2"
-                ];
+                ]; */
             }
             $claim = null;
             if ($request->claim_id == 0) {

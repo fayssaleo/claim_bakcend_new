@@ -14,6 +14,7 @@ use App\Modules\TypeOfEquipment\Models\TypeOfEquipment;
 use App\Modules\EquipmentMatricule\Models\EquipmentMatricule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use PhpParser\Error;
 use PhpParser\Node\Expr\Array_;
 use stdClass;
 use App\Modules\LiabilityInsuranceFiles\Models\LiabilityInsuranceFiles;
@@ -25,13 +26,27 @@ class EquipmentController extends Controller
 
         if($request->id==0){
             $validator = Validator::make($request->all(), [
-              //  "name" => "required:brand,name",
-            ]);
+                "type_of_equipment_id" => "required:equipment,type_of_equipment_id",
+                "brand_id" => "required:equipment,brand_id",
+                "nature_of_damage_id" => "required:equipment,nature_of_damage_id",
+                "cause_damage" => "required:equipment,cause_damage",
+                "damage_caused_by" => "required:equipment,damage_caused_by",
+            ],
+            [
+                'type_of_equipment_id.required' => 'You have to choose the type of equipment !',
+                'brand_id.required' => 'You have to choose type of the brande !',
+                'nature_of_damage_id.required' => 'You have to choose type of the nature of damage !',
+                'cause_damage.required' => 'You have to choose type of the cause damage !',
+                'damage_caused_by.required' => 'You have to choose type of the damage caused by !',
+            ]
+            );
             if ($validator->fails()) {
-                return [
+                throw new  Error($validator->errors()->__toString()) ;
+
+                /* return [
                     "payload" => $validator->errors(),
                     "status" => "406_2"
-                ];
+                ]; */
             }
             $claim = null;
             if($request->claim_id==0){
